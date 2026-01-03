@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
 
-// FIX: We explicitly tell the plugin where the file is
-const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+// Standard usage (Auto-detects i18n/request.ts)
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   experimental: {
