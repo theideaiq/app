@@ -1,91 +1,142 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
-import { ShoppingBag, GraduationCap, PlayCircle, Users, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { ShoppingBag, Gamepad2, GraduationCap, Building2, ArrowRight, Star, Truck, ShieldCheck } from 'lucide-react';
+
+// UI Kit
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 
 export default function Home() {
   const services = [
     {
       title: "The Megastore",
-      domain: "https://megastore.theideaiq.com",
-      description: "Premium products, curated for your lifestyle.",
+      desc: "Iraq's premium destination for electronics, books, and lifestyle.",
       icon: <ShoppingBag className="w-8 h-8 text-brand-pink" />,
-      action: "Shop Now"
-    },
-    {
-      title: "The Academy",
-      domain: "https://academy.theideaiq.com",
-      description: "Courses, exchange programs, and cultural articles.",
-      icon: <GraduationCap className="w-8 h-8 text-brand-pink" />,
-      action: "Learn More"
+      href: "/megastore", // This will hit your 404 for now (which is fun!)
+      color: "border-brand-pink"
     },
     {
       title: "IDEA Plus",
-      domain: "https://plus.theideaiq.com",
-      description: "Rentals for books, games, and movies. Delivered.",
-      icon: <PlayCircle className="w-8 h-8 text-brand-pink" />,
-      action: "Start Renting"
+      desc: "Rent PS5 games, books, and movies. Delivered to your door.",
+      icon: <Gamepad2 className="w-8 h-8 text-brand-yellow" />,
+      href: "/plus",
+      color: "border-brand-yellow"
     },
     {
-      title: "The Network",
-      domain: "https://connect.theideaiq.com",
-      description: "Professional networking and HR management solutions.",
-      icon: <Users className="w-8 h-8 text-brand-pink" />,
-      action: "Connect"
+      title: "The Academy",
+      desc: "Master new skills with cohort-based courses in Baghdad.",
+      icon: <GraduationCap className="w-8 h-8 text-blue-500" />,
+      href: "/academy", // Links to academy placeholder
+      color: "border-blue-500"
+    },
+    {
+      title: "The IDEA Suite",
+      desc: "Corporate solutions for procurement and recruitment.",
+      icon: <Building2 className="w-8 h-8 text-brand-dark" />,
+      href: "/suite",
+      color: "border-brand-dark"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-brand-dark font-sans selection:bg-brand-yellow selection:text-brand-pink">
+    <div className="min-h-screen bg-slate-50 pt-20">
       
-      {/* Hero Section */}
-      <section className="pt-40 pb-24 px-4 bg-brand-pink text-white text-center rounded-b-[3rem] shadow-xl">
-        <div className="max-w-4xl mx-auto">
-          <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-brand-yellow font-medium text-sm">
-            Welcome to the Ecosystem
-          </div>
-          <h1 className="text-4xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
-            Innovation for <br/>
-            <span className="text-brand-yellow">Every Aspect</span> of Life.
-          </h1>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto mb-10 font-light">
-            Bridging the gap between commerce, education, entertainment, and professional growth in Iraq.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="#services" className="bg-brand-yellow text-brand-dark px-8 py-4 rounded-full font-bold hover:bg-yellow-400 transition shadow-lg flex items-center justify-center gap-2">
-              Explore Services <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
+      {/* 1. HERO SECTION */}
+      <section className="relative px-4 py-20 lg:py-32 overflow-hidden bg-white">
+        <div className="max-w-7xl mx-auto relative z-10 text-center">
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-block py-1 px-3 rounded-full bg-brand-pink/10 text-brand-pink text-sm font-bold tracking-wide mb-6">
+              THE DIGITAL ECOSYSTEM FOR IRAQ
+            </span>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight text-brand-dark mb-6">
+              Innovation for <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-yellow">
+                Every Aspect of Life.
+              </span>
+            </h1>
+            <p className="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Shop, learn, play, and grow with The IDEA. One account, infinite possibilities. 
+              Serving Baghdad and beyond.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Link href="/register">
+                <Button className="h-14 px-8 text-lg w-full sm:w-auto">
+                  Get Started <ArrowRight className="ml-2" size={20} />
+                </Button>
+              </Link>
+              <Link href="/about">
+                <Button variant="outline" className="h-14 px-8 text-lg w-full sm:w-auto">
+                  Our Story
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+
         </div>
+        
+        {/* Abstract Background Blobs */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-yellow/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-pink/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
       </section>
 
-      {/* Services Grid */}
-      <section id="services" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* 2. SERVICES GRID */}
+      <section className="py-24 px-4 max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-brand-dark">The Ecosystem</h2>
-          <p className="mt-4 text-slate-500">One account. Endless possibilities.</p>
+          <h2 className="text-3xl font-bold text-brand-dark">Explore Our Universe</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service, index) => (
-            <a 
-              key={index} 
-              href={service.domain}
-              className="group p-8 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-pink-50 flex items-center justify-center mb-6 group-hover:bg-brand-pink transition-colors duration-300">
-                <div className="group-hover:text-white transition-colors">
-                  {service.icon}
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-brand-dark mb-2">{service.title}</h3>
-              <p className="text-slate-500 text-sm mb-8 leading-relaxed">{service.description}</p>
-              <div className="flex items-center text-sm font-bold text-brand-pink group-hover:gap-2 transition-all">
-                {service.action} <ArrowRight className="w-4 h-4 ml-1" />
-              </div>
-            </a>
+          {services.map((service, i) => (
+            <Link key={i} href={service.href}>
+              <Card className={`p-8 h-full hover:-translate-y-2 transition-transform duration-300 border-t-4 ${service.color}`}>
+                <div className="mb-6">{service.icon}</div>
+                <h3 className="text-xl font-bold text-brand-dark mb-3">{service.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{service.desc}</p>
+              </Card>
+            </Link>
           ))}
         </div>
       </section>
-    </div>
-  );
-}
+
+      {/* 3. WHY CHOOSE US */}
+      <section className="bg-brand-dark text-white py-24 px-4 rounded-3xl mx-4 lg:mx-8 mb-20 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+          
+          <div className="md:w-1/2">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">Built for the <br/><span className="text-brand-yellow">Modern Iraqi.</span></h2>
+            <p className="text-slate-400 text-lg mb-8">
+              We understand the local challenges. That is why we built a platform that prioritizes trust, speed, and quality above all else.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/10 rounded-lg"><Truck className="text-brand-pink"/></div>
+                <span className="font-medium">Same-Day Delivery</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/10 rounded-lg"><ShieldCheck className="text-brand-yellow"/></div>
+                <span className="font-medium">Genuine Products</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/10 rounded-lg"><Star className="text-brand-pink"/></div>
+                <span className="font-medium">Premium Support</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/10 rounded-lg"><Gamepad2 className="text-brand-yellow"/></div>
+                <span className="font-medium">Exclusive Content</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="md:w-1/2 relative h-[400px] w-full bg-slate-800 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+             {/* Placeholder for a cool lifestyle image */}
+             <div className="absolute inset-0 bg-gradient-to-tr from-brand-pink
