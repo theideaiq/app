@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Shield, Lock, Eye, FileText, Globe, Server } from 'lucide-react';
+import { FileText, Gavel, ShieldAlert, AlertTriangle, Scale, Globe } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 
-export default function PrivacyPolicy() {
+export default function TermsPage() {
   return (
     <div className="min-h-screen bg-slate-50 pt-28 pb-20 px-4">
       <div className="max-w-4xl mx-auto">
@@ -12,234 +12,199 @@ export default function PrivacyPolicy() {
         {/* Header */}
         <div className="mb-12 text-center">
           <div className="w-16 h-16 bg-brand-pink/10 text-brand-pink rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Shield size={32} />
+            <Scale size={32} />
           </div>
-          <h1 className="text-4xl font-black text-brand-dark mb-4">Privacy Policy</h1>
+          <h1 className="text-4xl font-black text-brand-dark mb-4">Terms of Service</h1>
           <p className="text-slate-500">Last Updated: January 3, 2026</p>
         </div>
 
         <Card className="p-8 md:p-12 space-y-12">
           
-          {/* Introduction */}
-          <section className="space-y-4">
-            <p className="leading-relaxed text-slate-600">
-              We understand that online privacy is important to our users ("You" and "Your"), especially when conducting business. 
-              This statement governs our privacy policies ("Privacy Policy") concerning those users ("Visitors") who visit without 
-              transacting business and users ("Authorized Customers") who register to transact business and make use of the various 
-              services ("Service"), operationally offered by The IDEA ("Company", "Ourselves", "We", "Our", and "Us").
-            </p>
-            <p className="leading-relaxed text-slate-600">
-              This page applies to information collected through both our online and offline funnels. It informs you of our policies 
-              regarding the collection, use, and disclosure of personal information and data we receive from users of our Service.
-            </p>
-          </section>
-
-          {/* 1. Types of Data */}
+          {/* 1. Introduction */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
               <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
-              Types of Data Collected
-            </h2>
-            
-            <div className="pl-11 space-y-6">
-              <div>
-                <h3 className="font-bold text-lg mb-2">Personal Data</h3>
-                <p className="text-slate-600 mb-2">
-                  Personal Data refers to any information that identifies or can be used to identify, contact, or locate the person to whom such information pertains, including, but not limited to:
-                </p>
-                <ul className="list-disc pl-5 text-slate-600 space-y-1">
-                  <li>Name, address, phone number, and email address.</li>
-                  <li><strong>Identity Verification:</strong> For high-value rentals (e.g., PS5 consoles), we may request a copy of your National ID or Passport.</li>
-                  <li><strong>Delivery Coordinates:</strong> Exact location data shared with our logistics partners for order fulfillment.</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-bold text-lg mb-2">Payment Information</h3>
-                <p className="text-slate-600">
-                  We do not store your sensitive financial information (such as raw credit card numbers) on our servers. All financial transactions are processed by secure, third-party payment providers including <strong>Wayl, ZainCash, FIB (First Iraqi Bank), and Stripe</strong> in compliance with PCI-DSS standards.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-bold text-lg mb-2">Usage (Log) Data</h3>
-                <p className="text-slate-600">
-                  We collect information your browser sends whenever you visit our Service. This Usage Data may include your computer’s Internet Protocol address (IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, and other statistics.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* 2. Tracking and Cookies */}
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
-              <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
-              Tracking and Cookies
+              Introduction
             </h2>
             <div className="pl-11 text-slate-600 space-y-4">
               <p>
-                We use cookies and similar tracking technologies to track the activity on our Service and hold certain information.
-                Examples of Cookies we use:
+                Welcome to The IDEA. These Terms of Service (“Terms”, “Agreement”) constitute a legally binding agreement made between you, 
+                whether personally or on behalf of an entity (“You”, “User”), and The IDEA (“Company”, “We”, “Us”, or “Our”), located at 
+                <strong> Al-Sinaha St, Eastern Karradah, Baghdad, Iraq</strong>.
               </p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li><strong>Session Cookies:</strong> To operate our Service (e.g., keeping you logged in).</li>
-                <li><strong>Preference Cookies:</strong> To remember your settings (e.g., language preference).</li>
-                <li><strong>Security Cookies:</strong> For security purposes.</li>
-              </ul>
               <p>
-                <strong>Third-Party Analytics:</strong> We may use third-party Service Providers (such as Google Analytics) to monitor and analyze the use of our Service.
+                By accessing or using our website, mobile application, or services (collectively, the "Service"), you agree that you have read, 
+                understood, and agreed to be bound by these Terms.
+              </p>
+              <div className="p-4 bg-red-50 text-red-700 border border-red-100 rounded-lg text-sm font-bold">
+                IF YOU DO NOT AGREE WITH ALL OF THESE TERMS, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SERVICE AND YOU MUST DISCONTINUE USE IMMEDIATELY.
+              </div>
+            </div>
+          </section>
+
+          {/* 2. Eligibility */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
+              <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+              Eligibility
+            </h2>
+            <div className="pl-11 text-slate-600">
+              <p>
+                The Service is intended for users who are at least 13 years old. Persons under the age of 13 are not permitted to use or register for the Service. 
+                If you are a minor in your jurisdiction (generally under 18), you must have the permission of, and be directly supervised by, your parent or guardian to use the Service.
               </p>
             </div>
           </section>
 
-          {/* 3. Use of Data */}
+          {/* 3. User Accounts */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
               <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
-              Use of Data
+              User Accounts
             </h2>
-            <div className="pl-11">
-              <p className="text-slate-600 mb-4">The IDEA uses the collected data for various purposes:</p>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {[
-                  "Provision and maintenance of the Service",
-                  "Processing Rental & Store Orders",
-                  "Notification of changes to the Service",
-                  "Provision of customer care and support",
-                  "Analysis of data to improve the Service",
-                  "Monitoring the usage of the Service",
-                  "Detection, prevention, and addressing of technical issues",
-                  "Fulfillment of obligations under Iraqi Consumer Protection Law No. 1 of 2010"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-slate-600 text-sm">
-                    <div className="min-w-[6px] h-[6px] rounded-full bg-brand-pink mt-1.5"></div>
-                    {item}
-                  </li>
-                ))}
+            <div className="pl-11 text-slate-600 space-y-2">
+              <p>To access certain features (Rentals, B2B Suite), you may be required to register. You agree to:</p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Provide true, accurate, current, and complete information.</li>
+                <li>Keep your password confidential and accept responsibility for all account activity.</li>
+                <li><strong>Identity Verification:</strong> For rental access, you agree to provide valid Government ID (National ID or Passport) if requested for fraud prevention.</li>
               </ul>
+              <p className="text-sm italic mt-2">
+                We reserve the right to remove or reclaim usernames if we determine they are inappropriate or infringe on trademarks.
+              </p>
             </div>
           </section>
 
-          {/* 4. Data Retention */}
+          {/* 4. Intellectual Property */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
               <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
-              Data Retention
+              Intellectual Property Rights
             </h2>
             <div className="pl-11 text-slate-600">
-              <p className="mb-4">
-                We will retain your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. 
-                We will retain and use your Data to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our legal agreements.
+              <p>
+                Unless otherwise indicated, the Service is our proprietary property. All source code, databases, software, website designs, audio, video, text, 
+                and graphics (the “Content”) and the trademarks (the “Marks”) are owned or controlled by us or licensed to us, and are protected by copyright and trademark laws.
               </p>
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                <p className="text-sm">
-                  <strong>User Profiles:</strong> For users that register on our website, we store the personal information they provide in their user profile. 
-                  All users can see, edit, or delete their personal information at any time (except they cannot change their username).
-                </p>
-              </div>
             </div>
           </section>
 
-          {/* 5. Transfer of Data */}
+          {/* 5. Payments & Billing */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
               <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">5</span>
-              Transfer of Data
+              Payments & Billing
             </h2>
             <div className="pl-11 text-slate-600">
               <p>
-                Your information may be transferred to — and maintained on — computers located outside of your state, province, country, 
-                or other governmental jurisdiction where the data protection laws may differ. 
+                Payments are processed via our partners <strong>Wayl, ZainCash, and FIB</strong>. By making a purchase or rental, you agree to:
               </p>
-              <p className="mt-2">
-                If you are located outside of Iraq and choose to provide information to us, please note that we transfer the data to 
-                <strong> Iraq (and secure servers in Frankfurt, Germany via Supabase)</strong> and process it there. 
-                By submitting your information, you agree to this transfer.
-              </p>
+              <ul className="list-disc pl-5 mt-2 space-y-1">
+                <li>Pay all charges at the prices then in effect for your purchases.</li>
+                <li>Authorize us to charge your chosen payment provider for these amounts.</li>
+                <li><strong>Refunds:</strong> Refunds are processed in accordance with our Refund Policy and Iraqi Consumer Law.</li>
+              </ul>
             </div>
           </section>
 
-          {/* 6. Disclosure of Data */}
+          {/* 6. User Prohibited Activities */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
               <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">6</span>
-              Disclosure of Data
+              Prohibited Activities
             </h2>
             <div className="pl-11 text-slate-600">
-              <p className="mb-2">The IDEA may disclose your Personal Data in the good faith belief that such action is necessary to:</p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Comply with a legal obligation (e.g., Iraqi Law enforcement request).</li>
-                <li>Protect and defend the rights or property of The IDEA.</li>
-                <li>Prevent or investigate possible wrongdoings in connection with the Service (e.g., Rental Theft).</li>
-                <li>Protect the personal safety of users of the Service or the public.</li>
+              <p className="mb-2">You agree not to:</p>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                <li className="flex gap-2"><AlertTriangle size={16} className="text-red-500 shrink-0" /> Trick, defraud, or mislead us or other users.</li>
+                <li className="flex gap-2"><AlertTriangle size={16} className="text-red-500 shrink-0" /> Circumvent security features.</li>
+                <li className="flex gap-2"><AlertTriangle size={16} className="text-red-500 shrink-0" /> Use the Service to compete with us.</li>
+                <li className="flex gap-2"><AlertTriangle size={16} className="text-red-500 shrink-0" /> Engage in automated data mining or bots.</li>
               </ul>
             </div>
           </section>
 
-          {/* 7. Governing Law */}
-          <section className="space-y-4">
+          {/* 7. RENTAL AGREEMENT (CRITICAL) */}
+          <section className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
             <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
-              <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">7</span>
-              Governing Law (Iraq)
+              <span className="bg-brand-dark text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">7</span>
+              Rental Agreement & Liability
             </h2>
             <div className="pl-11 text-slate-600">
               <p className="mb-4">
-                This Privacy Policy and any disputes related to it shall be governed by and construed in accordance with the laws of the Republic of Iraq, specifically:
+                When you rent equipment (e.g., PS5, Cameras, Books) from IDEA Plus, you agree to the following strict terms:
               </p>
-              <ul className="list-disc pl-5 mb-4 space-y-1">
-                <li>Consumer Protection Law No. 1 of 2010</li>
-                <li>Electronic Signature and Electronic Transactions Law No. 78 of 2012</li>
+              <ul className="list-disc pl-5 space-y-2">
+                <li><strong>Care of Goods:</strong> You must return items in the exact condition they were received, normal wear and tear excepted.</li>
+                <li><strong>Liability:</strong> You are 100% financially liable for the full replacement cost of any item that is lost, stolen, or damaged while in your possession.</li>
+                <li><strong>Late Fees:</strong> Items not returned by the due date will incur a daily late fee equivalent to the daily rental rate.</li>
+                <li><strong>Non-Return:</strong> Failure to return an item within 7 days of the due date will be considered theft and reported to Iraqi authorities.</li>
               </ul>
-              <p>
-                You agree that any legal action or proceeding between The IDEA and you for any purpose concerning this Privacy Policy shall be brought exclusively in a court of competent jurisdiction sitting in <strong>Baghdad, Iraq</strong>.
-              </p>
             </div>
           </section>
 
-          {/* 8. GDPR & CCPA (International) */}
+          {/* 8. Marketplace Disclaimer */}
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
               <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">8</span>
-              International Rights (GDPR & CCPA)
-            </h2>
-            <div className="pl-11 text-slate-600 space-y-6">
-              
-              <div>
-                <h3 className="font-bold text-lg mb-2">GDPR (For European Union Users)</h3>
-                <p className="mb-2">If you are a resident of the European Economic Area (EEA), you have certain data protection rights:</p>
-                <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li>The right to access, update, or delete the information we have on you.</li>
-                  <li>The right of rectification (correcting wrong info).</li>
-                  <li>The right to object or restrict processing.</li>
-                  <li>The right to data portability.</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-bold text-lg mb-2">California Consumer Privacy Rights (CCPA)</h3>
-                <p className="mb-2">If you are a California resident, you have specific rights:</p>
-                <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li><strong>Right to Know:</strong> You can request that we disclose what data we collect.</li>
-                  <li><strong>Right to Delete:</strong> You can request that we delete your data.</li>
-                  <li><strong>Right to Opt-Out:</strong> The IDEA does <strong>not</strong> sell your personal information.</li>
-                </ul>
-              </div>
-              
-              <div className="mt-4 p-4 bg-blue-50 text-blue-800 rounded-lg text-sm">
-                To exercise any of these rights, please contact us at <a href="mailto:privacy@theideaiq.com" className="font-bold underline">privacy@theideaiq.com</a>.
-              </div>
-            </div>
-          </section>
-
-          {/* 10. Children's Privacy */}
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
-              <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">9</span>
-              Children’s Privacy
+              Megastore Marketplace
             </h2>
             <div className="pl-11 text-slate-600">
               <p>
-                Our Service does not address anyone under the age of 13 ("Children"). We do not knowingly collect personally identifiable information from anyone under the age of 13. If we become aware that we have collected Personal Data from children without verification of parental consent, we take steps to remove that information from our servers.
+                The Megastore may include products sold by third-party sellers. While we verify sellers, The IDEA acts as a venue. 
+                We are not responsible for the quality, safety, or legality of items advertised by third parties, except where "Verified by IDEA" is explicitly stated.
+              </p>
+            </div>
+          </section>
+
+          {/* 9. Pioneer Program */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
+              <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">9</span>
+              The IDEA Pioneer Program
+            </h2>
+            <div className="pl-11 text-slate-600 text-sm">
+              <p>If you join our Affiliate Program:</p>
+              <ul className="list-disc pl-5 mt-2">
+                <li>You are an independent contractor, not an employee.</li>
+                <li>Commissions are paid only on valid, completed sales.</li>
+                <li>We may terminate your participation at any time for fraudulent or aggressive marketing.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* 10. Disclaimers & Liability */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
+              <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">10</span>
+              Limitation of Liability
+            </h2>
+            <div className="pl-11 text-slate-600 uppercase text-sm font-bold tracking-wide">
+              <p className="mb-4">
+                THE SERVICE IS PROVIDED "AS-IS". TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES.
+              </p>
+              <p>
+                IN NO EVENT WILL THE IDEA BE LIABLE FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL, OR INCIDENTAL DAMAGES ARISING FROM YOUR USE OF THE SERVICE, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+              </p>
+            </div>
+          </section>
+
+          {/* 12. Governing Law */}
+          <section className="space-y-4">
+            <h2 className="text-2xl font-bold text-brand-dark flex items-center gap-3">
+              <span className="bg-brand-yellow/20 text-brand-dark w-8 h-8 rounded-full flex items-center justify-center text-sm">11</span>
+              Governing Law (Iraq)
+            </h2>
+            <div className="pl-11 text-slate-600">
+              <p>
+                These Terms shall be governed by and defined following the laws of the Republic of Iraq, specifically adhering to:
+              </p>
+              <ul className="list-disc pl-5 mt-2 mb-2">
+                <li><strong>Civil Code No. 40 of 1951</strong></li>
+                <li><strong>Electronic Signature and Electronic Transactions Law No. 78 of 2012</strong></li>
+              </ul>
+              <p>
+                Any dispute arising out of or in connection with this Agreement shall be subject to the exclusive jurisdiction of the <strong>Courts of Baghdad, Iraq</strong>.
               </p>
             </div>
           </section>
@@ -247,15 +212,15 @@ export default function PrivacyPolicy() {
           {/* Contact */}
           <section className="pt-8 border-t border-slate-100">
             <h2 className="text-xl font-bold text-brand-dark mb-4">Contact Us</h2>
-            <p className="text-slate-600 mb-4">If you have any questions about this Privacy Policy, please contact us:</p>
+            <p className="text-slate-600 mb-4">To resolve a complaint regarding the Service, please contact us at:</p>
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex items-center gap-3 text-slate-700">
-                <Globe size={20} className="text-brand-pink" />
-                <span>privacy@theideaiq.com</span>
+                <Gavel size={20} className="text-brand-pink" />
+                <span>legal@theideaiq.com</span>
               </div>
               <div className="flex items-center gap-3 text-slate-700">
-                <Shield size={20} className="text-brand-yellow" />
-                <span>Eastern Karradah, Baghdad, Iraq</span>
+                <Globe size={20} className="text-brand-yellow" />
+                <span>Al-Sinaha St, Eastern Karradah, Baghdad</span>
               </div>
             </div>
           </section>
