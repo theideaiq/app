@@ -244,7 +244,7 @@ export default function SonicEcosystemPage() {
                 </Float>
 
                 {/* Post-Processing for the "Awwwards" Glow */}
-                <EffectComposer disableNormalPass>
+                <EffectComposer>
                     <Bloom luminanceThreshold={1} intensity={1.5} levels={9} mipmapBlur />
                     <Noise opacity={0.05} />
                     <Vignette eskil={false} offset={0.1} darkness={1.1} />
