@@ -140,7 +140,7 @@ export default function SonicEcosystemPage() {
         if (!error && data) {
             const formattedNodes = data.map((dbNode: any) => ({
                 id: dbNode.id,
-                position: [dbNode.position.x, dbNode.position.y, dbNode.position.z],
+                position: [dbNode.position.x, dbNode.position.y, dbNode.position.z] as [number, number, number],
                 color: BRAND_COLORS[Math.floor(Math.random() * BRAND_COLORS.length)],
                 note: dbNode.note,
                 timestamp: Date.parse(dbNode.created_at)
