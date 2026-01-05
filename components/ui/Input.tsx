@@ -18,6 +18,7 @@ export function Input({ label, error, className, id, ...props }: InputProps) {
       )}
       <input
         id={inputId}
+        aria-invalid={!!error}
         className={`
           w-full px-4 py-3 rounded-lg border bg-white transition-all outline-none
           ${error 
