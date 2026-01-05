@@ -6,40 +6,36 @@ import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { SkipForward, Music } from 'lucide-react';
 
-// Prevent SSR issues
-const ReactPlayer = dynamic(() => import('react-player'), {
+// Dynamic Import (Essential for ReactPlayer in Next.js)
+const ReactPlayer = dynamic(() => import('react-player'), { 
   ssr: false,
   loading: () => (
     <div className="w-full h-full bg-gray-900 flex items-center justify-center text-gray-500 animate-pulse">
-      Loading Player...
+      Loading System...
     </div>
-  ),
+  )
 }) as any;
 
 export default function JukeboxHost() {
   const [queue, setQueue] = useState<any[]>([]);
   const [currentVideo, setCurrentVideo] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-
+  const [isClient, setIsClient] = useState(false); // To ensure we only render on client
+  
   const supabase = createClient();
 
-  /* ---------------- FETCH & REALTIME ---------------- */
-
   useEffect(() => {
+    setIsClient(true);
     fetchQueue();
 
     const channel = supabase
       .channel('jukebox_queue')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'jukebox_queue' },
-        (payload) => setQueue((prev) => [...prev, payload.new])
-      )
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jukebox_queue' }, (payload) => {
+        setQueue((prev) => [...prev, payload.new]);
+      })
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   useEffect(() => {
@@ -48,16 +44,13 @@ export default function JukeboxHost() {
     }
   }, [queue, currentVideo]);
 
-  /* ---------------- HELPERS ---------------- */
-
   const fetchQueue = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('jukebox_queue')
       .select('*')
       .eq('status', 'pending')
       .order('created_at', { ascending: true });
-
-    if (error) console.error(error);
+    
     if (data) setQueue(data);
   };
 
@@ -67,124 +60,109 @@ export default function JukeboxHost() {
       setIsPlaying(false);
       return;
     }
-
+    
     const next = queue[0];
     const remaining = queue.slice(1);
-
+    
     setCurrentVideo(next);
     setQueue(remaining);
-    setIsPlaying(false); // reset so light thumbnail shows again
 
-    await supabase
-      .from('jukebox_queue')
-      .update({ status: 'played' })
-      .eq('id', next.id);
+    await supabase.from('jukebox_queue').update({ status: 'played' }).eq('id', next.id);
   };
 
-  /* ---------------- UI ---------------- */
+  // Skip rendering until client-side to be safe
+  if (!isClient) return <div className="min-h-screen bg-black" />;
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8 font-sans">
-
-      {/* PLAYER */}
+      
+      {/* --- PLAYER --- */}
       <div className="w-full max-w-4xl aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-white/10 mb-8 relative">
-        {currentVideo ? (
-          <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${currentVideo.video_id}`}
-            light={currentVideo.thumbnail || true}
-            playing={isPlaying}
-            controls
-            width="100%"
-            height="100%"
-            onClickPreview={() => setIsPlaying(true)}
-            onStart={() => setIsPlaying(true)}
-            onEnded={playNext}
-            onError={(e) => console.error('ReactPlayer error:', e)}
-            config={{
-              youtube: {
-                playerVars: {
-                  rel: 0,
-                  modestbranding: 1,
-                },
-              },
-            }}
-          />
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600 bg-gray-900">
-            <Music size={64} className="mb-4 opacity-50" />
-            <p className="text-xl font-bold">Queue is empty</p>
-            <p className="text-sm mt-2 opacity-70">Waiting for requests...</p>
-          </div>
+        <ReactPlayer
+          key={currentVideo ? currentVideo.video_id : 'empty'}
+          
+          // 1. STANDARD URL
+          url={currentVideo ? `https://www.youtube.com/watch?v=${currentVideo.video_id}` : ''}
+          
+          // 2. MOBILE & AUTOPLAY SETTINGS
+          playing={true}
+          controls={true}
+          muted={true}        // Required for mobile autoplay
+          playsinline={true}  // Required for iOS
+          
+          width="100%"
+          height="100%"
+          
+          onStart={() => setIsPlaying(true)}
+          onEnded={playNext}
+          
+          // 3. FIX: Explicitly type the error to fix Build Failure
+          onError={(e: any) => console.error('ReactPlayer error:', e)}
+
+          config={{
+            youtube: {
+              playerVars: { 
+                origin: typeof window !== 'undefined' ? window.location.origin : undefined 
+              }
+            }
+          }}
+        />
+
+        {!currentVideo && (
+           <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600 z-10 bg-gray-900">
+             <Music size={64} className="mb-4 opacity-50" />
+             <p className="text-xl font-bold">Queue is empty</p>
+             <p className="text-sm mt-2 opacity-70">Waiting for requests...</p>
+           </div>
         )}
       </div>
 
-      {/* INFO */}
+      {/* --- INFO --- */}
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-4xl font-black mb-2 tracking-tight">
-          {currentVideo?.title || 'Silence in the Room'}
+            {currentVideo?.title || "Silence in the Room"}
         </h1>
-
-        <div
-          className={`inline-flex items-center gap-2 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest ${
-            isPlaying
-              ? 'bg-red-600/20 text-red-500'
-              : 'bg-gray-800 text-gray-500'
-          }`}
-        >
-          {isPlaying ? 'Now Playing' : 'Standby'}
+        <div className={`inline-flex items-center gap-2 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest ${isPlaying ? 'bg-red-600/20 text-red-500' : 'bg-gray-800 text-gray-500'}`}>
+           {isPlaying ? "Now Playing" : "Standby"}
         </div>
       </div>
 
-      {/* UP NEXT */}
+      {/* --- UP NEXT --- */}
       <div className="w-full max-w-2xl">
         <div className="flex justify-between items-end mb-4 border-b border-white/10 pb-2">
-          <h3 className="text-gray-400 text-sm uppercase tracking-widest font-bold">
-            Up Next ({queue.length})
-          </h3>
-
-          {currentVideo && (
-            <button
-              onClick={playNext}
-              className="text-white hover:text-red-500 transition flex items-center gap-2 text-sm font-bold"
-            >
-              <SkipForward size={16} /> Skip Song
-            </button>
-          )}
+           <h3 className="text-gray-400 text-sm uppercase tracking-widest font-bold">Up Next ({queue.length})</h3>
+           {currentVideo && (
+             <button onClick={playNext} className="text-white hover:text-red-500 transition flex items-center gap-2 text-sm font-bold">
+               <SkipForward size={16} /> Skip Song
+             </button>
+           )}
         </div>
-
+        
         <div className="space-y-2">
           {queue.length === 0 ? (
-            <p className="text-gray-700 text-center py-4 italic">
-              No songs coming up.
-            </p>
+             <p className="text-gray-700 text-center py-4 italic">No songs coming up.</p>
           ) : (
             queue.map((item, i) => (
-              <div
-                key={item.id}
-                className="flex items-center gap-4 p-3 bg-white/5 rounded-lg border border-white/5"
-              >
-                <span className="text-gray-500 font-mono text-sm w-6">
-                  #{i + 1}
-                </span>
-
-                <div className="relative w-12 h-8 rounded overflow-hidden flex-shrink-0">
-                  <Image
-                    src={item.thumbnail}
-                    alt="thumbnail"
-                    fill
-                    className="object-cover"
-                    sizes="48px"
-                  />
+                <div key={item.id} className="flex items-center gap-4 p-3 bg-white/5 rounded-lg border border-white/5">
+                  <span className="text-gray-500 font-mono text-sm w-6">#{i + 1}</span>
+                  
+                  <div className="relative w-12 h-8 rounded overflow-hidden flex-shrink-0">
+                      <Image 
+                        src={item.thumbnail} 
+                        alt="thumbnail"
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
+                  </div>
+                  
+                  <p className="truncate font-medium text-gray-300">{item.title}</p>
                 </div>
-
-                <p className="truncate font-medium text-gray-300">
-                  {item.title}
-                </p>
-              </div>
             ))
           )}
         </div>
       </div>
+
     </div>
   );
 }
