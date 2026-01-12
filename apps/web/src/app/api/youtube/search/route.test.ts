@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { searchYouTube } from '@/lib/youtube';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GET } from './route';
 
 // Mock the youtube library

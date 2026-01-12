@@ -1,3 +1,4 @@
+import Hero from '@/components/home/Hero';
 import {
   Building2,
   Gamepad2,
@@ -7,9 +8,8 @@ import {
   Star,
   Truck,
 } from 'lucide-react';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import Hero from '@/components/home/Hero';
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
