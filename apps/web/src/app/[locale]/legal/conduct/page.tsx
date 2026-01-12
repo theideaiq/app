@@ -1,5 +1,6 @@
 'use client';
 
+import { Card } from '@/components/ui/Card';
 import {
   Accessibility,
   AlertTriangle,
@@ -9,7 +10,6 @@ import {
   Truck,
   Users,
 } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
 
 export default function CodeOfConduct() {
   return (

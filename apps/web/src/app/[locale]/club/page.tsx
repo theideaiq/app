@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/Button';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -15,7 +16,6 @@ import {
   Trophy,
   Users,
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
 
 // Data structure mapping the Telegram channels
 const clubChannels = [
