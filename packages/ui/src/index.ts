@@ -1,9 +1,9 @@
-export * from './Button';
-export * from './Badge';
-export * from './Card';
-export { default as GlobalLoader } from './GlobalLoader';
-export * from './Input';
-export * from './Modal';
-export * from './Select';
-export * from './Spinner';
-export * from './Textarea';
+export * from './Button/Button';
+export * from './Badge/Badge';
+export * from './Card/Card';
+export { default as GlobalLoader } from './GlobalLoader/GlobalLoader';
+export * from './Input/Input';
+export * from './Modal/Modal';
+export * from './Select/Select';
+export * from './Spinner/Spinner';
+export * from './Textarea/Textarea';
