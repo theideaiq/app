@@ -237,7 +237,7 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
         </div>
       </div>
 
-      <div className="border border-slate-200 rounded-lg overflow-hidden">
+      <div className="border border-slate-200 rounded-lg overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
             {table.getHeaderGroups().map((headerGroup) => (
