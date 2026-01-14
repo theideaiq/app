@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createMiddlewareClient } from '@/lib/supabase/middleware';
+import { ROLES } from '@/lib/constants';
 import type { UserRole } from '@/types/auth';
 
 export async function proxy(request: NextRequest) {
@@ -78,7 +79,7 @@ export async function proxy(request: NextRequest) {
     }
 
     const role = profile.role as UserRole;
-    if (role !== 'admin' && role !== 'superadmin') {
+    if (role !== ROLES.ADMIN && role !== ROLES.SUPERADMIN) {
       if (path !== '/login') {
          return NextResponse.redirect(new URL('/login', request.url));
       }

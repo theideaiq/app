@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { createClient } from '@/lib/supabase/client';
+import { ROLES } from '@/lib/constants';
 import type { UserRole } from '@/types/auth';
 
 export default function LoginPage() {
@@ -53,7 +54,7 @@ export default function LoginPage() {
 
       const role = profile?.role as UserRole;
 
-      if (role !== 'admin' && role !== 'superadmin') {
+      if (role !== ROLES.ADMIN && role !== ROLES.SUPERADMIN) {
         await supabase.auth.signOut();
         throw new Error('Access Denied: Admin privileges required.');
       }

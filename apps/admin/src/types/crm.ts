@@ -1,5 +1,8 @@
-export type CRMStatus = 'lead' | 'customer' | 'churned' | 'vip';
-export type UserRole = 'user' | 'admin' | 'superadmin' | 'student'; // 'student' mentioned in example
+import { CRM_STATUSES, ROLES } from '@/lib/constants';
+import type { UserRole } from './auth';
+
+export type CRMStatus = (typeof CRM_STATUSES)[keyof typeof CRM_STATUSES];
+export { UserRole };
 
 export interface Profile {
   id: string;
