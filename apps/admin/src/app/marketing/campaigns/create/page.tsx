@@ -11,7 +11,7 @@ export default async function CreateCampaignPage() {
     .select('*');
 
   return (
-    <div className="p-8">
+    <div>
       <CreateCampaignForm segments={(segments || []) as MarketingSegment[]} />
     </div>
   );

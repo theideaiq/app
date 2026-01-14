@@ -24,7 +24,7 @@ export function FinanceNav() {
             key={item.href}
             href={item.href}
             className={cn(
-              'flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors',
+              'flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap',
               isActive
                 ? 'bg-primary/10 text-primary'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground',

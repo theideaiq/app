@@ -23,8 +23,8 @@ export default async function ContactsPage() {
   const data = (profiles || []) as unknown as Profile[];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="mb-8">
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div>
         <h1 className="text-3xl font-bold text-slate-900">CRM Contacts</h1>
         <p className="text-slate-500">Manage your user base and leads.</p>
       </div>

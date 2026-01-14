@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
-import { Sidebar } from '@/components/sidebar';
+import { AdminShell } from '@/components/admin-shell';
 
-const inter = Inter({ subsets: ['latin'] });
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-poppins',
+});
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard',
@@ -18,13 +22,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto bg-muted/10 p-6">
-            {children}
-          </main>
-        </div>
+      <body className={poppins.className}>
+        <AdminShell>{children}</AdminShell>
         <Toaster />
       </body>
     </html>

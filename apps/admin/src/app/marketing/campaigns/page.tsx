@@ -13,8 +13,8 @@ export default async function CampaignsPage() {
     .order('created_at', { ascending: false });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Email Campaigns</h1>
           <p className="text-slate-500">Blast updates to your user segments.</p>
@@ -24,7 +24,7 @@ export default async function CampaignsPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 border-b border-slate-200 font-medium text-slate-500">
             <tr>

@@ -41,7 +41,7 @@ export function StaffTable({ data }: { data: HRStaffPlan[] }) {
   });
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <table className="w-full text-sm">
         <thead className="bg-muted/50 border-b">
           {table.getHeaderGroups().map((headerGroup) => (
