@@ -1,13 +1,28 @@
+# Dependencies
 node_modules
+.pnpm-store
+
+# Next.js & Frameworks
 .next
-.turbo
-.DS_Store
-.env
-.env.*.local
-dist
+out
 build
-coverage
-*.tsbuildinfo
+dist
+packages/*/dist
+packages/*/out
+
+# Vercel
+.vercel
+
+# TurboRepo
+.turbo
+
+# Environment Variables (Strict Security)
+.env
+.env*.local
+.env.production
+.env.development
+.env.test
+! .env.example
 
 # Logs
 *.log
@@ -17,8 +32,26 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Testing
+coverage
 test-results/
 playwright-report/
+blob-report/
+junit.xml
 
-*storybook.log
+# Storybook
 storybook-static
+*storybook.log
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# IDEs (Optional but recommended)
+.idea
+.vscode
+*.swp
+*.swo
+
+# Security
+*.pem
+*.key
