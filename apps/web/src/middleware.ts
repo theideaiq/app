@@ -7,9 +7,8 @@ const intlMiddleware = createMiddleware({
   localePrefix: 'always', // <--- THIS IS THE KEY CHANGE
 });
 
-// 2. Export it as 'proxy' to satisfy Next.js 15+
 // biome-ignore lint/suspicious/noExplicitAny: migration
-export default function proxy(request: any) {
+export default function middleware(request: any) {
   return intlMiddleware(request);
 }
 
