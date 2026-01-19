@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @source "../../../../packages/ui";
-@config "../../../../packages/ui/tailwind.config.ts";
 
 @theme {
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
