@@ -3,26 +3,27 @@
 
 @theme {
   /* 1. Define Fonts */
-  /* This maps the Next.js font variables to Tailwind utilities */
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-
-  /* Creates the 'font-arabic' utility class */
   --font-arabic: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
+
+  /* 2. Define Brand Colors (Critical for Tailwind v4) */
+  --color-brand-dark: #0F172A;  /* Slate 900 */
+  --color-brand-deep: #020617;  /* Slate 950 */
+  --color-brand-pink: #E91E63;  /* Pink 500 */
+  --color-brand-yellow: #FFD600; /* Yellow 400 */
 }
 
 /* 3. Global Styles */
 body {
   font-family: var(--font-sans);
+  /* Now 'text-brand-dark' exists and this will work */
   @apply bg-slate-50 text-brand-dark;
-
-  /* Font Smoothing: Makes text look sharper, especially important for Arabic script */
+  
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* 4. Utilities */
-
-/* Hide Scrollbar but allow scrolling (for horizontal sliders) */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
