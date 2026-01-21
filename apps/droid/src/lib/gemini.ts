@@ -1,4 +1,4 @@
-import { GoogleGenAI, type Content, type Tool } from '@google/genai';
+import { type Content, GoogleGenAI, type Tool } from '@google/genai';
 import { droidEnv as env } from '@repo/env/droid';
 import { supabase } from './supabase';
 
@@ -60,7 +60,9 @@ async function searchProducts(query: string) {
     sanitizedQuery.length > MAX_LOG_QUERY_LENGTH
       ? sanitizedQuery.slice(0, MAX_LOG_QUERY_LENGTH) + '…'
       : sanitizedQuery;
-  console.log(`Searching products for query (truncated if long): "${safeQueryForLog}"`);
+  console.log(
+    `Searching products for query (truncated if long): "${safeQueryForLog}"`,
+  );
   const escapedQuery = escapeIlikePattern(query);
   const { data, error } = await supabase
     .from('products')
@@ -72,7 +74,9 @@ async function searchProducts(query: string) {
     // biome-ignore lint/suspicious/noConsole: logging is fine
     console.error('Supabase search error:', error);
     const maybeErrorObject =
-      typeof error === 'object' && error !== null ? (error as Record<string, unknown>) : null;
+      typeof error === 'object' && error !== null
+        ? (error as Record<string, unknown>)
+        : null;
     const errorCode =
       maybeErrorObject && typeof maybeErrorObject.code === 'string'
         ? maybeErrorObject.code
@@ -110,7 +114,7 @@ export async function generateResponse(
       history: history,
       config: {
         tools: tools,
-      }
+      },
     });
 
     const result = await chat.sendMessage({ message });
@@ -127,7 +131,10 @@ export async function generateResponse(
 
         if (!isValidSearchQuery(query)) {
           // biome-ignore lint/suspicious/noConsole: logging is fine
-          console.error('Invalid arguments for search_products tool call:', rawArgs);
+          console.error(
+            'Invalid arguments for search_products tool call:',
+            rawArgs,
+          );
           return "I couldn't understand the product you want to search for. Please try again with a clear product name or short description, for example: 'wireless headphones', 'iPhone 15 case', or '4K monitor'.";
         }
 
@@ -145,11 +152,14 @@ export async function generateResponse(
           ],
         });
 
-        return finalResult.text || "I couldn't generate a follow-up answer based on the product search. Please try again.";
+        return (
+          finalResult.text ||
+          "I couldn't generate a follow-up answer based on the product search. Please try again."
+        );
       }
     }
 
-    return result.text || "";
+    return result.text || '';
   } catch (error) {
     // biome-ignore lint/suspicious/noConsole: logging is fine
     console.error('Gemini Error:', error);
