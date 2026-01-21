@@ -149,7 +149,7 @@ export async function generateResponse(
       }
     }
 
-    return result.text || "";
+    return result.text || "I couldn't generate a response. Please try asking your question again or try rephrasing it.";
   } catch (error) {
     // biome-ignore lint/suspicious/noConsole: logging is fine
     console.error('Gemini Error:', error);
