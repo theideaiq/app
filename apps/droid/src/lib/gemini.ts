@@ -70,8 +70,19 @@ export async function generateResponse(
     if (functionCalls && functionCalls.length > 0) {
       const call = functionCalls[0];
       if (call.name === 'search_products') {
-        const args = call.args as { query: string };
-        const productData = await searchProducts(args.query);
+        const rawArgs = call.args;
+        const query =
+          rawArgs && typeof rawArgs === 'object'
+            ? (rawArgs as Record<string, unknown>).query
+            : undefined;
+
+        if (typeof query !== 'string' || query.trim().length === 0) {
+          // biome-ignore lint/suspicious/noConsole: logging is fine
+          console.error('Invalid arguments for search_products tool call:', rawArgs);
+          return "I couldn't understand the product you want to search for. Please try again with a product name.";
+        }
+
+        const productData = await searchProducts(query);
 
         // Send the function response back to the model
         const finalResult = await chat.sendMessage({
