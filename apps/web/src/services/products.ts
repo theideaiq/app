@@ -29,6 +29,7 @@ export async function getProducts(): Promise<Product[]> {
       .gt('stock_count', 0);
 
     if (error) {
+      // biome-ignore lint/suspicious/noConsole: error logging
       console.error('Error fetching products:', error);
       return [];
     }
@@ -56,6 +57,7 @@ export async function getProducts(): Promise<Product[]> {
       };
     });
   } catch (err) {
+    // biome-ignore lint/suspicious/noConsole: error logging
     console.error('Unexpected error fetching products:', err);
     return [];
   }
