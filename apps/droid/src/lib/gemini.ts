@@ -48,7 +48,14 @@ function isValidSearchQuery(query: unknown): query is string {
 
 async function searchProducts(query: string) {
   // biome-ignore lint/suspicious/noConsole: logging is fine
-  console.log(`Searching products for: ${query}`);
+  const MAX_LOG_QUERY_LENGTH = 100;
+  const rawQuery = String(query);
+  const sanitizedQuery = rawQuery.replace(/[\r\n\t]/g, ' ');
+  const safeQueryForLog =
+    sanitizedQuery.length > MAX_LOG_QUERY_LENGTH
+      ? sanitizedQuery.slice(0, MAX_LOG_QUERY_LENGTH) + '…'
+      : sanitizedQuery;
+  console.log(`Searching products for query (truncated if long): "${safeQueryForLog}"`);
   const { data, error } = await supabase
     .from('products')
     .select('id, name, description, price, stock_count')
