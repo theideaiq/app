@@ -74,7 +74,7 @@ async function searchProducts(query: string) {
     // biome-ignore lint/suspicious/noConsole: logging is fine
     console.error('Supabase search error:', error);
     const maybeErrorObject =
-      typeof error === 'object' && error !== null
+      typeof error === 'object'
         ? (error as Record<string, unknown>)
         : null;
     const errorCode =
