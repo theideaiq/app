@@ -57,7 +57,7 @@ export async function generateResponse(
 ): Promise<string> {
   try {
     const chat = ai.chats.create({
-      model: 'gemini-3-flash',
+      model: 'gemini-1.5-flash',
       history: history,
       config: {
         tools: tools,
@@ -74,7 +74,7 @@ export async function generateResponse(
         const productData = await searchProducts(args.query);
 
         // Send the function response back to the model
-        const result2 = await chat.sendMessage({
+        const finalResult = await chat.sendMessage({
           message: [
             {
               functionResponse: {
@@ -85,7 +85,7 @@ export async function generateResponse(
           ],
         });
 
-        return result2.text || "";
+        return finalResult.text || "";
       }
     }
 
