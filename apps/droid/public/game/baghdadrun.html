@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baghdad Runner</title>
+    <title>Baghdad Runner: Golden Age</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Amiri:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Amiri:wght@400;700&display=swap');
 
         :root {
             --gold: #ffd700;
-            --dark: #1a0b2e;
-            --teal: #009688;
+            --dark: #120a1f;
+            --sand: #e6c288;
         }
 
         body {
             margin: 0;
-            padding: 0;
             overflow: hidden;
             background-color: var(--dark);
             font-family: 'Amiri', serif;
-            touch-action: none; /* Prevent scrolling on mobile */
+            touch-action: none; /* Disables zoom/scroll on mobile */
             user-select: none;
         }
 
@@ -27,8 +26,7 @@
             position: relative;
             width: 100vw;
             height: 100vh;
-            /* Gradient Sky Background (Always visible) */
-            background: linear-gradient(to bottom, #2b1055, #7597de); 
+            background: linear-gradient(to bottom, #2b1055, #7597de); /* Fallback Sky */
             overflow: hidden;
         }
 
@@ -44,77 +42,76 @@
             top: 20px;
             right: 20px;
             color: var(--gold);
-            text-shadow: 2px 2px 0 #000;
-            font-family: 'Cinzel Decorative', cursive;
-            font-size: 2rem;
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
             z-index: 10;
             pointer-events: none;
+            text-shadow: 2px 2px 0px #000;
         }
 
-        /* Screens (Start / Game Over) */
-        #menu-layer {
+        /* MENU & GAME OVER SCREENS */
+        .screen {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(18, 10, 31, 0.85);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(26, 11, 46, 0.8);
             z-index: 20;
             transition: opacity 0.3s;
         }
 
-        .card {
-            background: rgba(20, 10, 35, 0.95);
-            padding: 40px;
-            border: 4px double var(--gold);
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            max-width: 400px;
-            width: 80%;
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         h1 {
-            margin: 0;
+            font-family: 'Cinzel', serif;
             font-size: 3rem;
             color: var(--gold);
-            font-family: 'Cinzel Decorative', cursive;
-            line-height: 1;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            margin: 0 0 20px 0;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            line-height: 1.1;
         }
 
         p {
             color: #ddd;
             font-size: 1.2rem;
-            margin: 20px 0;
+            margin-bottom: 40px;
+            text-align: center;
+            max-width: 80%;
         }
 
         button {
-            background: linear-gradient(45deg, #ffc107, #ff9800);
+            background: linear-gradient(45deg, #ffc107, #ff8f00);
             border: none;
-            padding: 15px 50px;
+            padding: 15px 60px;
             font-size: 1.5rem;
-            font-weight: bold;
+            font-family: 'Cinzel', serif;
             color: #3e2723;
-            cursor: pointer;
+            font-weight: bold;
             border-radius: 50px;
-            font-family: 'Cinzel Decorative', cursive;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: transform 0.1s, box-shadow 0.1s;
         }
 
-        button:active { transform: scale(0.95); }
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
 
-        .hidden { display: none !important; opacity: 0; pointer-events: none; }
-
-        /* Mobile Controls */
-        #mobile-hint {
+        /* MOBILE CONTROLS HINT */
+        .controls-hint {
             position: absolute;
             bottom: 20px;
             width: 100%;
             text-align: center;
-            color: rgba(255,255,255,0.5);
-            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
             pointer-events: none;
         }
     </style>
@@ -122,39 +119,30 @@
 <body>
 
 <div id="game-container">
-    <div id="ui-layer">
-        <span id="score">0000</span>
-    </div>
+    <div id="ui-layer">Score: <span id="score">0</span></div>
 
     <canvas id="gameCanvas"></canvas>
 
-    <div id="menu-layer">
-        <div class="card" id="start-card">
-            <h1>Baghdad<br>Run</h1>
-            <p>Escape the Djinn.<br>Run through the Golden City.</p>
-            <button id="btn-start">Start</button>
-            <p style="font-size: 0.9rem; margin-top: 15px; color: #aaa;">Space / Tap to Jump<br>Down / Hold Left to Slide</p>
-        </div>
-
-        <div class="card hidden" id="game-over-card">
-            <h1 style="color: #ff5252">Fallen</h1>
-            <p>Distance: <span id="final-score">0</span>m</p>
-            <button id="btn-restart">Retry</button>
-        </div>
+    <div id="start-screen" class="screen">
+        <h1>Baghdad<br>Runner</h1>
+        <p>Run through the Golden City.<br>Jump over ruins. Duck under Djinns.</p>
+        <button id="btn-start">RUN</button>
+        <div class="controls-hint">Space / Tap Right to JUMP<br>Down / Tap Left to DUCK</div>
     </div>
-    
-    <div id="mobile-hint">Tap Right: Jump • Tap Left: Slide</div>
+
+    <div id="game-over-screen" class="screen hidden">
+        <h1 style="color: #ff5252">Fallen</h1>
+        <p>Distance Traveled: <span id="final-score">0</span>m</p>
+        <button id="btn-restart">RETRY</button>
+    </div>
 </div>
 
 <script>
-    /**
-     * BAGHDAD RUNNER - FINAL FIXED VERSION
-     */
-    
-    // --- CANVAS SETUP ---
+    // --- ENGINE SETUP ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     
+    // Auto-Resize Canvas
     let GAME_WIDTH = window.innerWidth;
     let GAME_HEIGHT = window.innerHeight;
 
@@ -165,353 +153,321 @@
         canvas.height = GAME_HEIGHT;
     }
     window.addEventListener('resize', resize);
-    resize(); // Call immediately
+    resize();
 
-    // --- CONFIGURATION ---
-    const GROUND_HEIGHT = 60;
+    // --- GAME CONSTANTS ---
+    const GROUND_H = 60;
     const GRAVITY = 0.6;
-    const JUMP_FORCE = -14;
-    const SPEED_INITIAL = 9;
+    const JUMP_FORCE = -13;
+    const SPEED_INIT = 8;
     const SPEED_MAX = 20;
 
-    // --- GAME STATE ---
+    // --- GLOBAL STATE ---
     let frameId;
-    let gameSpeed = SPEED_INITIAL;
-    let score = 0;
     let isRunning = false;
+    let score = 0;
+    let gameSpeed = SPEED_INIT;
     let frameCount = 0;
 
-    // --- ASSETS (Procedural Drawing) ---
+    // --- GAME OBJECTS ---
     
-    function drawRunner(ctx, x, y, w, h, frame, isDucking) {
-        ctx.save();
-        ctx.translate(x, y);
-
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.beginPath(); ctx.ellipse(w/2, h-2, w/3, 4, 0, 0, Math.PI*2); ctx.fill();
-
-        if (isDucking) {
-            // SLIDE POSE
-            // Robe
-            ctx.fillStyle = '#009688';
-            ctx.fillRect(0, h-30, w, 25);
-            // Sash
-            ctx.fillStyle = '#ffc107';
-            ctx.fillRect(0, h-30, w, 5);
-            // Head (Forward)
-            ctx.fillStyle = '#ffcc80';
-            ctx.fillRect(w-20, h-25, 20, 20);
-            // Turban
-            ctx.fillStyle = '#fff';
-            ctx.beginPath(); ctx.arc(w-10, h-25, 12, 0, Math.PI*2); ctx.fill();
-        } else {
-            // RUN POSE (Bobbing)
-            const bob = Math.sin(frame * 0.25) * 4;
-            ctx.translate(0, bob);
-
-            // Legs (Simple animation)
-            ctx.fillStyle = '#333';
-            const legSwing = Math.sin(frame * 0.3) * 15;
-            ctx.fillRect(15 + legSwing, h-15, 10, 15);
-            ctx.fillRect(15 - legSwing, h-15, 10, 15);
-
-            // Robe
-            ctx.fillStyle = '#009688'; // Teal
-            ctx.fillRect(10, 20, w-20, h-35);
-            // Sash
-            ctx.fillStyle = '#ffc107'; // Gold
-            ctx.fillRect(10, 35, w-20, 8);
-
-            // Head
-            ctx.fillStyle = '#ffcc80'; // Skin
-            ctx.fillRect(15, 5, 20, 15);
-            // Turban
-            ctx.fillStyle = '#fff';
-            ctx.beginPath(); ctx.arc(25, 5, 14, Math.PI, 0); ctx.fill();
-            // Gem
-            ctx.fillStyle = '#e91e63';
-            ctx.beginPath(); ctx.arc(25, 2, 4, 0, Math.PI*2); ctx.fill();
-            
-            // Scarf Trail
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(10, 15);
-            ctx.quadraticCurveTo(-10 + Math.sin(frame*0.5)*5, 15, -20, 25);
-            ctx.stroke();
-        }
-        ctx.restore();
-    }
-
-    function drawObstacle(ctx, obs) {
-        if (obs.type === 'ruin') {
-            // RUIN (Jump over)
-            ctx.fillStyle = '#5d4037';
-            ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
-            // Detail
-            ctx.fillStyle = '#8d6e63';
-            ctx.fillRect(obs.x + 5, obs.y + 5, obs.w - 10, 10);
-            // Foliage
-            ctx.fillStyle = '#2e7d32';
-            ctx.beginPath(); ctx.arc(obs.x, obs.y + 10, 10, 0, Math.PI*2); ctx.fill();
-        } else {
-            // DJINN (Duck under)
-            const hover = Math.sin(frameCount * 0.1) * 8;
-            const y = obs.y + hover;
-            
-            // Aura
-            ctx.fillStyle = 'rgba(103, 58, 183, 0.3)';
-            ctx.beginPath(); ctx.arc(obs.x + obs.w/2, y + obs.h/2, 25, 0, Math.PI*2); ctx.fill();
-            
-            // Body
-            ctx.fillStyle = '#673ab7';
-            ctx.beginPath(); ctx.arc(obs.x + obs.w/2, y + obs.h/2, 15, 0, Math.PI*2); ctx.fill();
-            
-            // Eyes
-            ctx.fillStyle = '#ffeb3b';
-            ctx.beginPath(); ctx.arc(obs.x + obs.w/2 - 5, y + obs.h/2, 3, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(obs.x + obs.w/2 + 5, y + obs.h/2, 3, 0, Math.PI*2); ctx.fill();
-        }
-    }
-
-    function drawBackground(ctx) {
-        // Sky Gradient (Changes with score)
-        const cycle = (score % 2000) / 2000;
-        const grad = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
+    // 1. The Player (Scholar)
+    const player = {
+        x: 50,
+        y: 0,
+        w: 50,
+        h: 60,
+        vy: 0,
+        grounded: true,
+        ducking: false,
         
-        if (cycle < 0.5) { // Sunset
-            grad.addColorStop(0, '#2b1055');
-            grad.addColorStop(1, '#7597de');
-        } else { // Night
-            grad.addColorStop(0, '#000000');
-            grad.addColorStop(1, '#1a0b2e');
-        }
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-
-        // Ground
-        ctx.fillStyle = '#3e2723';
-        ctx.fillRect(0, GAME_HEIGHT - GROUND_HEIGHT, GAME_WIDTH, GROUND_HEIGHT);
-        ctx.fillStyle = '#ffb300'; // Gold Line
-        ctx.fillRect(0, GAME_HEIGHT - GROUND_HEIGHT, GAME_WIDTH, 5);
-
-        // Moon
-        ctx.fillStyle = '#fff9c4';
-        ctx.beginPath(); ctx.arc(GAME_WIDTH - 100, 100, 40, 0, Math.PI*2); ctx.fill();
-    }
-
-    // --- CLASSES ---
-
-    class Player {
-        constructor() {
-            this.w = 50;
-            this.h = 60;
-            this.x = 50;
-            this.y = GAME_HEIGHT - GROUND_HEIGHT - this.h;
-            this.vy = 0;
-            this.grounded = true;
-            this.ducking = false;
-        }
-
-        jump() {
-            if (this.grounded) {
-                this.vy = JUMP_FORCE;
-                this.grounded = false;
-            }
-        }
-
-        duck(isActive) {
-            this.ducking = isActive;
-            if (isActive) {
-                this.h = 30; // Shrink
-                this.y = GAME_HEIGHT - GROUND_HEIGHT - this.h;
-            } else {
-                this.h = 60; // Grow
-                this.y = GAME_HEIGHT - GROUND_HEIGHT - this.h;
-            }
-        }
-
-        update() {
+        update: function() {
+            // Apply Gravity
             if (!this.grounded) {
                 this.vy += GRAVITY;
                 this.y += this.vy;
             }
 
-            // Floor Collision
-            const floorY = GAME_HEIGHT - GROUND_HEIGHT - this.h;
+            // Ground Collision
+            const floorY = GAME_HEIGHT - GROUND_H - this.h;
             if (this.y >= floorY) {
                 this.y = floorY;
                 this.vy = 0;
                 this.grounded = true;
-            }
-        }
-
-        draw() {
-            drawRunner(ctx, this.x, this.y, this.w, this.h, frameCount, this.ducking);
-        }
-    }
-
-    class Obstacle {
-        constructor() {
-            // 50/50 Chance of Ruin or Djinn
-            this.type = Math.random() > 0.5 ? 'ruin' : 'djinn';
-            this.x = GAME_WIDTH + 100;
-            this.markedForDeletion = false;
-
-            if (this.type === 'ruin') {
-                this.w = 40 + Math.random() * 20;
-                this.h = 50 + Math.random() * 30;
-                this.y = GAME_HEIGHT - GROUND_HEIGHT - this.h;
             } else {
-                // Djinn (Flying) - Needs Ducking
-                this.w = 50;
-                this.h = 50;
-                this.y = GAME_HEIGHT - GROUND_HEIGHT - 90; // High in air
+                this.grounded = false;
             }
-        }
-
-        update() {
-            this.x -= gameSpeed;
-            if (this.x + this.w < -100) this.markedForDeletion = true;
-        }
-
-        draw() {
-            drawObstacle(ctx, this);
-        }
-    }
-
-    // --- GAME ENGINE ---
-
-    const Game = {
-        player: new Player(),
-        obstacles: [],
-        spawnTimer: 0,
-
-        start() {
-            // Reset variables
-            this.player = new Player();
-            this.obstacles = [];
-            this.spawnTimer = 0;
-            gameSpeed = SPEED_INITIAL;
-            score = 0;
-            frameCount = 0;
-            isRunning = true;
-
-            // UI Hide
-            document.getElementById('start-card').parentElement.classList.add('hidden'); // Hide menu layer
-            document.getElementById('menu-layer').classList.add('hidden'); 
-            
-            loop();
         },
 
-        update() {
-            frameCount++;
-            gameSpeed += 0.005;
-            if (gameSpeed > SPEED_MAX) gameSpeed = SPEED_MAX;
-
-            this.player.update();
-
-            // Spawn Obstacles
-            this.spawnTimer--;
-            if (this.spawnTimer <= 0) {
-                this.obstacles.push(new Obstacle());
-                this.spawnTimer = (60 + Math.random() * 40) * (SPEED_INITIAL / gameSpeed);
+        jump: function() {
+            if (this.grounded) {
+                this.vy = JUMP_FORCE;
+                this.grounded = false;
             }
+        },
 
-            // Move Obstacles & Check Collision
-            this.obstacles.forEach(obs => {
-                obs.update();
-
-                // Hitbox
-                const p = this.player;
-                // Shrink hitbox slightly for gameplay feel
-                if (p.x + 10 < obs.x + obs.w &&
-                    p.x + p.w - 10 > obs.x &&
-                    p.y + 10 < obs.y + obs.h &&
-                    p.y + p.h - 10 > obs.y) {
-                    
-                    this.gameOver();
+        duck: function(active) {
+            if (active) {
+                if (!this.ducking) {
+                    this.h = 30; // Shrink height
+                    this.y += 30; // Snap down
+                    this.ducking = true;
                 }
-            });
-
-            this.obstacles = this.obstacles.filter(o => !o.markedForDeletion);
-            
-            // Score
-            score++;
-            document.getElementById('score').innerText = Math.floor(score / 5).toString().padStart(4, '0');
+            } else {
+                if (this.ducking) {
+                    this.h = 60; // Restore height
+                    this.y -= 30; // Snap up
+                    this.ducking = false;
+                }
+            }
         },
 
-        draw() {
-            ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-            drawBackground(ctx);
-            this.obstacles.forEach(o => o.draw());
-            this.player.draw();
-        },
+        draw: function() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
 
-        gameOver() {
-            isRunning = false;
-            cancelAnimationFrame(frameId);
+            // Simple Shadow
+            ctx.fillStyle = "rgba(0,0,0,0.3)";
+            ctx.beginPath(); ctx.ellipse(this.w/2, this.h, this.w/3, 5, 0, 0, Math.PI*2); ctx.fill();
+
+            // Robe Color (Teal)
+            ctx.fillStyle = "#009688";
             
-            // Show Game Over UI
-            document.getElementById('menu-layer').classList.remove('hidden');
-            document.getElementById('start-card').classList.add('hidden');
-            document.getElementById('game-over-card').classList.remove('hidden');
-            document.getElementById('final-score').innerText = Math.floor(score / 5);
+            if (this.ducking) {
+                // Sliding Pose
+                ctx.fillRect(0, 0, this.w, this.h); // Body
+                ctx.fillStyle = "#ffcc80"; // Skin
+                ctx.fillRect(this.w-15, 5, 15, 15); // Head forward
+            } else {
+                // Running Pose (Bobbing)
+                const bob = Math.sin(frameCount * 0.2) * 3;
+                ctx.translate(0, bob);
+                
+                ctx.fillRect(10, 20, this.w-20, this.h-30); // Body
+                ctx.fillStyle = "#ffcc80"; // Skin
+                ctx.fillRect(15, 5, 20, 15); // Head
+                
+                // Sash (Gold)
+                ctx.fillStyle = "#ffd700";
+                ctx.fillRect(10, 35, this.w-20, 8);
+                
+                // Legs (Simple movement)
+                ctx.fillStyle = "#333";
+                const leg = Math.sin(frameCount * 0.3) * 10;
+                ctx.fillRect(15 + leg, this.h-10, 8, 10);
+                ctx.fillRect(25 - leg, this.h-10, 8, 10);
+            }
+            ctx.restore();
         }
     };
 
+    // 2. Obstacles Manager
+    let obstacles = [];
+    let spawnTimer = 0;
+
+    function spawnObstacle() {
+        const type = Math.random() > 0.6 ? 'ruin' : 'djinn';
+        let obs = {
+            type: type,
+            x: GAME_WIDTH + 50,
+            y: 0,
+            w: 0,
+            h: 0,
+            remove: false
+        };
+
+        if (type === 'ruin') {
+            // Ground obstacle (Must Jump)
+            obs.w = 40 + Math.random() * 20;
+            obs.h = 50 + Math.random() * 30;
+            obs.y = GAME_HEIGHT - GROUND_H - obs.h;
+        } else {
+            // Flying obstacle (Must Duck)
+            obs.w = 50;
+            obs.h = 40;
+            obs.y = GAME_HEIGHT - GROUND_H - 90; // High enough to duck under
+        }
+        obstacles.push(obs);
+    }
+
+    // 3. Background (Procedural)
+    const buildings = [];
+    for(let i=0; i<10; i++) buildings.push({x: Math.random()*GAME_WIDTH, w: 50+Math.random()*100, h: 50+Math.random()*150});
+
+    function drawBackground() {
+        // Sky Gradient (Day/Night Cycle based on score)
+        const cycle = (score % 2000) / 2000;
+        const grad = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
+        if (cycle < 0.5) { 
+            grad.addColorStop(0, "#2b1055"); grad.addColorStop(1, "#7597de"); // Sunset
+        } else { 
+            grad.addColorStop(0, "#000"); grad.addColorStop(1, "#1a0b2e"); // Night
+        }
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+        // Ground
+        ctx.fillStyle = "#e6c288"; // Sand
+        ctx.fillRect(0, GAME_HEIGHT - GROUND_H, GAME_WIDTH, GROUND_H);
+        
+        // Cityscape (Silhouette)
+        ctx.fillStyle = "rgba(0,0,0,0.2)";
+        buildings.forEach(b => {
+            b.x -= gameSpeed * 0.2; // Parallax
+            if(b.x + b.w < 0) { b.x = GAME_WIDTH; b.h = 50+Math.random()*150; } // Recycle
+            
+            const y = GAME_HEIGHT - GROUND_H - b.h;
+            // Draw Dome or Box
+            if(b.h > 100) {
+                ctx.beginPath(); ctx.arc(b.x + b.w/2, y, b.w/2, Math.PI, 0); ctx.fill();
+                ctx.fillRect(b.x, y, b.w, b.h);
+            } else {
+                ctx.fillRect(b.x, y, b.w, b.h);
+            }
+        });
+    }
+
+    // --- MAIN LOOP ---
     function loop() {
         if (!isRunning) return;
-        Game.update();
-        Game.draw();
+
+        // 1. Update
+        frameCount++;
+        score++;
+        gameSpeed += 0.002;
+        if(gameSpeed > SPEED_MAX) gameSpeed = SPEED_MAX;
+        
+        player.update();
+
+        // Spawn Logic
+        spawnTimer--;
+        if (spawnTimer <= 0) {
+            spawnObstacle();
+            spawnTimer = (60 + Math.random() * 40) * (SPEED_INIT / gameSpeed);
+        }
+
+        // Obstacle Logic
+        obstacles.forEach(obs => {
+            obs.x -= gameSpeed;
+            if (obs.x + obs.w < -100) obs.remove = true;
+
+            // Simple Collision AABB
+            // Shrink hitbox slightly (10px) for fairness
+            if (player.x + 10 < obs.x + obs.w &&
+                player.x + player.w - 10 > obs.x &&
+                player.y + 10 < obs.y + obs.h &&
+                player.y + player.h - 10 > obs.y) {
+                gameOver();
+            }
+        });
+        obstacles = obstacles.filter(o => !o.remove);
+
+        // 2. Draw
+        ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        drawBackground();
+        
+        // Draw Obstacles
+        obstacles.forEach(obs => {
+            if (obs.type === 'ruin') {
+                ctx.fillStyle = "#795548"; // Brown rock
+                ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+            } else {
+                ctx.fillStyle = "#673ab7"; // Purple Djinn
+                ctx.beginPath(); ctx.arc(obs.x + obs.w/2, obs.y + obs.h/2, 20, 0, Math.PI*2); ctx.fill();
+                // Glow
+                ctx.shadowBlur = 10; ctx.shadowColor = "#ffd700";
+                ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(obs.x+15, obs.y+15, 5, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        });
+
+        player.draw();
+
+        // UI Update
+        document.getElementById('score').innerText = Math.floor(score/10);
+
         frameId = requestAnimationFrame(loop);
     }
 
-    // --- CONTROLS ---
+    function startGame() {
+        // Reset
+        player.y = 0; 
+        player.vy = 0;
+        obstacles = [];
+        score = 0;
+        gameSpeed = SPEED_INIT;
+        isRunning = true;
+        spawnTimer = 0;
 
-    // Button Listeners (The specific fix for the "Not Working" issue)
-    document.getElementById('btn-start').addEventListener('click', () => {
-        Game.start();
+        // UI
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-over-screen').classList.add('hidden');
+        
+        loop();
+    }
+
+    function gameOver() {
+        isRunning = false;
+        cancelAnimationFrame(frameId);
+        document.getElementById('game-over-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = Math.floor(score/10);
+    }
+
+    // --- CONTROLS ---
+    
+    // Mouse / Touch
+    const container = document.getElementById('game-container');
+    
+    function handleInput(type) {
+        if (!isRunning) return;
+        if (type === 'JUMP') player.jump();
+        if (type === 'DUCK_START') player.duck(true);
+        if (type === 'DUCK_END') player.duck(false);
+    }
+
+    container.addEventListener('touchstart', (e) => {
+        if(!isRunning) return;
+        e.preventDefault();
+        const touchX = e.touches[0].clientX;
+        // Split screen controls: Left side Duck, Right side Jump
+        if (touchX < GAME_WIDTH / 2) handleInput('DUCK_START');
+        else handleInput('JUMP');
+    });
+
+    container.addEventListener('touchend', (e) => {
+        handleInput('DUCK_END');
+    });
+
+    container.addEventListener('mousedown', (e) => {
+        if(!isRunning) return;
+        if(e.button === 0) handleInput('JUMP'); // Left click jump
+        if(e.button === 2) handleInput('DUCK_START'); // Right click duck (optional)
     });
     
-    document.getElementById('btn-restart').addEventListener('click', () => {
-        Game.start();
-    });
+    container.addEventListener('mouseup', () => handleInput('DUCK_END'));
 
     // Keyboard
-    window.addEventListener('keydown', e => {
-        if (e.code === 'Space' || e.code === 'ArrowUp') {
-            if (!isRunning && document.getElementById('menu-layer').className.indexOf('hidden') === -1) {
-                 Game.start();
-            } else {
-                 Game.player.jump();
-            }
+    window.addEventListener('keydown', (e) => {
+        if (!isRunning) {
+            if (e.code === 'Space' || e.code === 'Enter') startGame();
+            return;
         }
-        if (e.code === 'ArrowDown') Game.player.duck(true);
+        if (e.code === 'Space' || e.code === 'ArrowUp') player.jump();
+        if (e.code === 'ArrowDown') player.duck(true);
     });
 
-    window.addEventListener('keyup', e => {
-        if (e.code === 'ArrowDown') Game.player.duck(false);
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'ArrowDown') player.duck(false);
     });
 
-    // Touch
-    document.addEventListener('touchstart', e => {
-        if (!isRunning) return; // Let clicks handle the menu
-        const touchX = e.touches[0].clientX;
-        if (touchX < window.innerWidth / 2) {
-            Game.player.duck(true);
-        } else {
-            Game.player.jump();
-        }
-    });
+    // Buttons
+    document.getElementById('btn-start').addEventListener('click', startGame);
+    document.getElementById('btn-restart').addEventListener('click', startGame);
 
-    document.addEventListener('touchend', e => {
-        Game.player.duck(false);
-    });
-
-    // Initial Render (Background) to show it's working
-    drawBackground(ctx);
+    // Initial Render
+    drawBackground();
+    player.y = GAME_HEIGHT - GROUND_H - player.h; // Place player on ground
+    player.draw();
 
 </script>
 </body>
