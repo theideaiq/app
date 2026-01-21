@@ -36,6 +36,8 @@ describe('String Utils (@repo/utils)', () => {
       expect(decodeHtmlEntities('')).toBe('');
       // @ts-expect-error testing runtime safety
       expect(decodeHtmlEntities(null)).toBe('');
+      // @ts-expect-error testing runtime safety
+      expect(decodeHtmlEntities(undefined)).toBe('');
     });
   });
 });
