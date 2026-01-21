@@ -116,7 +116,8 @@
             if (Math.random() < 0.05) items.push(new Item());
 
             // Logic
-            items.forEach((item, i) => {
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
                 item.update();
                 item.draw();
 
@@ -141,7 +142,7 @@
                     items.splice(i, 1);
                     if (item.type === 'bulb') energy -= 5; // Missed opportunity
                 }
-            });
+            }
 
             // UI Update
             document.getElementById('score').innerText = score;
