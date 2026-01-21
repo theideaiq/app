@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baghdad Runner: Golden Age</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Amiri:wght@400;700&display=swap');
+
+        :root {
+            --gold: #ffd700;
+            --dark: #120a1f;
+            --sand: #e6c288;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: var(--dark);
+            font-family: 'Amiri', serif;
+            touch-action: none; /* Disables zoom/scroll on mobile */
+            user-select: none;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, #2b1055, #7597de); /* Fallback Sky */
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- UI OVERLAY --- */
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            z-index: 10;
+            pointer-events: none;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        /* MENU & GAME OVER SCREENS */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(18, 10, 31, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            transition: opacity 0.3s;
+        }
+
+        .screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            color: var(--gold);
+            margin: 0 0 20px 0;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            line-height: 1.1;
+        }
+
+        p {
+            color: #ddd;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ffc107, #ff8f00);
+            border: none;
+            padding: 15px 60px;
+            font-size: 1.5rem;
+            font-family: 'Cinzel', serif;
+            color: #3e2723;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* MOBILE CONTROLS HINT */
+        .controls-hint {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="ui-layer">Score: <span id="score">0</span></div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="start-screen" class="screen">
+        <h1>Baghdad<br>Runner</h1>
+        <p>Run through the Golden City.<br>Jump over ruins. Duck under Djinns.</p>
+        <button id="btn-start">RUN</button>
+        <div class="controls-hint">Space / Tap Right to JUMP<br>Down / Tap Left to DUCK</div>
+    </div>
+
+    <div id="game-over-screen" class="screen hidden">
+        <h1 style="color: #ff5252">Fallen</h1>
+        <p>Distance Traveled: <span id="final-score">0</span>m</p>
+        <button id="btn-restart">RETRY</button>
+    </div>
+</div>
+
+<script>
+    // --- ENGINE SETUP ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Auto-Resize Canvas
+    let GAME_WIDTH = window.innerWidth;
+    let GAME_HEIGHT = window.innerHeight;
+
+    function resize() {
+        GAME_WIDTH = window.innerWidth;
+        GAME_HEIGHT = window.innerHeight;
+        canvas.width = GAME_WIDTH;
+        canvas.height = GAME_HEIGHT;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // --- GAME CONSTANTS ---
+    const GROUND_H = 60;
+    const GRAVITY = 0.6;
+    const JUMP_FORCE = -13;
+    const SPEED_INIT = 8;
+    const SPEED_MAX = 20;
+
+    // --- GLOBAL STATE ---
+    let frameId;
+    let isRunning = false;
+    let score = 0;
+    let gameSpeed = SPEED_INIT;
+    let frameCount = 0;
+
+    // --- GAME OBJECTS ---
+    
+    // 1. The Player (Scholar)
+    const player = {
+        x: 50,
+        y: 0,
+        w: 50,
+        h: 60,
+        vy: 0,
+        grounded: true,
+        ducking: false,
+        
+        update: function() {
+            // Apply Gravity
+            if (!this.grounded) {
+                this.vy += GRAVITY;
+                this.y += this.vy;
+            }
+
+            // Ground Collision
+            const floorY = GAME_HEIGHT - GROUND_H - this.h;
+            if (this.y >= floorY) {
+                this.y = floorY;
+                this.vy = 0;
+                this.grounded = true;
+            } else {
+                this.grounded = false;
+            }
+        },
+
+        jump: function() {
+            if (this.grounded) {
+                this.vy = JUMP_FORCE;
+                this.grounded = false;
+            }
+        },
+
+        duck: function(active) {
+            if (active) {
+                if (!this.ducking) {
+                    this.h = 30; // Shrink height
+                    this.y += 30; // Snap down
+                    this.ducking = true;
+                }
+            } else {
+                if (this.ducking) {
+                    this.h = 60; // Restore height
+                    this.y -= 30; // Snap up
+                    this.ducking = false;
+                }
+            }
+        },
+
+        draw: function() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+
+            // Simple Shadow
+            ctx.fillStyle = "rgba(0,0,0,0.3)";
+            ctx.beginPath(); ctx.ellipse(this.w/2, this.h, this.w/3, 5, 0, 0, Math.PI*2); ctx.fill();
+
+            // Robe Color (Teal)
+            ctx.fillStyle = "#009688";
+            
+            if (this.ducking) {
+                // Sliding Pose
+                ctx.fillRect(0, 0, this.w, this.h); // Body
+                ctx.fillStyle = "#ffcc80"; // Skin
+                ctx.fillRect(this.w-15, 5, 15, 15); // Head forward
+            } else {
+                // Running Pose (Bobbing)
+                const bob = Math.sin(frameCount * 0.2) * 3;
+                ctx.translate(0, bob);
+                
+                ctx.fillRect(10, 20, this.w-20, this.h-30); // Body
+                ctx.fillStyle = "#ffcc80"; // Skin
+                ctx.fillRect(15, 5, 20, 15); // Head
+                
+                // Sash (Gold)
+                ctx.fillStyle = "#ffd700";
+                ctx.fillRect(10, 35, this.w-20, 8);
+                
+                // Legs (Simple movement)
+                ctx.fillStyle = "#333";
+                const leg = Math.sin(frameCount * 0.3) * 10;
+                ctx.fillRect(15 + leg, this.h-10, 8, 10);
+                ctx.fillRect(25 - leg, this.h-10, 8, 10);
+            }
+            ctx.restore();
+        }
+    };
+
+    // 2. Obstacles Manager
+    let obstacles = [];
+    let spawnTimer = 0;
+
+    function spawnObstacle() {
+        const type = Math.random() > 0.6 ? 'ruin' : 'djinn';
+        let obs = {
+            type: type,
+            x: GAME_WIDTH + 50,
+            y: 0,
+            w: 0,
+            h: 0,
+            remove: false
+        };
+
+        if (type === 'ruin') {
+            // Ground obstacle (Must Jump)
+            obs.w = 40 + Math.random() * 20;
+            obs.h = 50 + Math.random() * 30;
+            obs.y = GAME_HEIGHT - GROUND_H - obs.h;
+        } else {
+            // Flying obstacle (Must Duck)
+            obs.w = 50;
+            obs.h = 40;
+            obs.y = GAME_HEIGHT - GROUND_H - 90; // High enough to duck under
+        }
+        obstacles.push(obs);
+    }
+
+    // 3. Background (Procedural)
+    const buildings = [];
+    for(let i=0; i<10; i++) buildings.push({x: Math.random()*GAME_WIDTH, w: 50+Math.random()*100, h: 50+Math.random()*150});
+
+    function drawBackground() {
+        // Sky Gradient (Day/Night Cycle based on score)
+        const cycle = (score % 2000) / 2000;
+        const grad = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
+        if (cycle < 0.5) { 
+            grad.addColorStop(0, "#2b1055"); grad.addColorStop(1, "#7597de"); // Sunset
+        } else { 
+            grad.addColorStop(0, "#000"); grad.addColorStop(1, "#1a0b2e"); // Night
+        }
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+        // Ground
+        ctx.fillStyle = "#e6c288"; // Sand
+        ctx.fillRect(0, GAME_HEIGHT - GROUND_H, GAME_WIDTH, GROUND_H);
+        
+        // Cityscape (Silhouette)
+        ctx.fillStyle = "rgba(0,0,0,0.2)";
+        buildings.forEach(b => {
+            b.x -= gameSpeed * 0.2; // Parallax
+            if(b.x + b.w < 0) { b.x = GAME_WIDTH; b.h = 50+Math.random()*150; } // Recycle
+            
+            const y = GAME_HEIGHT - GROUND_H - b.h;
+            // Draw Dome or Box
+            if(b.h > 100) {
+                ctx.beginPath(); ctx.arc(b.x + b.w/2, y, b.w/2, Math.PI, 0); ctx.fill();
+                ctx.fillRect(b.x, y, b.w, b.h);
+            } else {
+                ctx.fillRect(b.x, y, b.w, b.h);
+            }
+        });
+    }
+
+    // --- MAIN LOOP ---
+    function loop() {
+        if (!isRunning) return;
+
+        // 1. Update
+        frameCount++;
+        score++;
+        gameSpeed += 0.002;
+        if(gameSpeed > SPEED_MAX) gameSpeed = SPEED_MAX;
+        
+        player.update();
+
+        // Spawn Logic
+        spawnTimer--;
+        if (spawnTimer <= 0) {
+            spawnObstacle();
+            spawnTimer = (60 + Math.random() * 40) * (SPEED_INIT / gameSpeed);
+        }
+
+        // Obstacle Logic
+        obstacles.forEach(obs => {
+            obs.x -= gameSpeed;
+            if (obs.x + obs.w < -100) obs.remove = true;
+
+            // Simple Collision AABB
+            // Shrink hitbox slightly (10px) for fairness
+            if (player.x + 10 < obs.x + obs.w &&
+                player.x + player.w - 10 > obs.x &&
+                player.y + 10 < obs.y + obs.h &&
+                player.y + player.h - 10 > obs.y) {
+                gameOver();
+            }
+        });
+        obstacles = obstacles.filter(o => !o.remove);
+
+        // 2. Draw
+        ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        drawBackground();
+        
+        // Draw Obstacles
+        obstacles.forEach(obs => {
+            if (obs.type === 'ruin') {
+                ctx.fillStyle = "#795548"; // Brown rock
+                ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+            } else {
+                ctx.fillStyle = "#673ab7"; // Purple Djinn
+                ctx.beginPath(); ctx.arc(obs.x + obs.w/2, obs.y + obs.h/2, 20, 0, Math.PI*2); ctx.fill();
+                // Glow
+                ctx.shadowBlur = 10; ctx.shadowColor = "#ffd700";
+                ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(obs.x+15, obs.y+15, 5, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        });
+
+        player.draw();
+
+        // UI Update
+        document.getElementById('score').innerText = Math.floor(score/10);
+
+        frameId = requestAnimationFrame(loop);
+    }
+
+    function startGame() {
+        // Reset
+        player.y = 0; 
+        player.vy = 0;
+        obstacles = [];
+        score = 0;
+        gameSpeed = SPEED_INIT;
+        isRunning = true;
+        spawnTimer = 0;
+
+        // UI
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-over-screen').classList.add('hidden');
+        
+        loop();
+    }
+
+    function gameOver() {
+        isRunning = false;
+        cancelAnimationFrame(frameId);
+        document.getElementById('game-over-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = Math.floor(score/10);
+    }
+
+    // --- CONTROLS ---
+    
+    // Mouse / Touch
+    const container = document.getElementById('game-container');
+    
+    function handleInput(type) {
+        if (!isRunning) return;
+        if (type === 'JUMP') player.jump();
+        if (type === 'DUCK_START') player.duck(true);
+        if (type === 'DUCK_END') player.duck(false);
+    }
+
+    container.addEventListener('touchstart', (e) => {
+        if(!isRunning) return;
+        e.preventDefault();
+        const touchX = e.touches[0].clientX;
+        // Split screen controls: Left side Duck, Right side Jump
+        if (touchX < GAME_WIDTH / 2) handleInput('DUCK_START');
+        else handleInput('JUMP');
+    });
+
+    container.addEventListener('touchend', (e) => {
+        handleInput('DUCK_END');
+    });
+
+    container.addEventListener('mousedown', (e) => {
+        if(!isRunning) return;
+        if(e.button === 0) handleInput('JUMP'); // Left click jump
+        if(e.button === 2) handleInput('DUCK_START'); // Right click duck (optional)
+    });
+    
+    container.addEventListener('mouseup', () => handleInput('DUCK_END'));
+
+    // Keyboard
+    window.addEventListener('keydown', (e) => {
+        if (!isRunning) {
+            if (e.code === 'Space' || e.code === 'Enter') startGame();
+            return;
+        }
+        if (e.code === 'Space' || e.code === 'ArrowUp') player.jump();
+        if (e.code === 'ArrowDown') player.duck(true);
+    });
+
+    window.addEventListener('keyup', (e) => {
+        if (e.code === 'ArrowDown') player.duck(false);
+    });
+
+    // Buttons
+    document.getElementById('btn-start').addEventListener('click', startGame);
+    document.getElementById('btn-restart').addEventListener('click', startGame);
+
+    // Initial Render
+    drawBackground();
+    player.y = GAME_HEIGHT - GROUND_H - player.h; // Place player on ground
+    player.draw();
+
+</script>
+</body>
+</html>
