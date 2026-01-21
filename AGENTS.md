@@ -15,7 +15,7 @@ Smell: Copy-pasting SVG code for common icons when a library like `lucide-react`
 Standard: Always use the imported icon component from the design system's icon library (e.g., `lucide-react`). Only use custom SVGs for branding or unique assets not available in the library.
 
 ### 2026-01-20 - Global Tech Stack Standards
-**Standard:** The project standardizes on Vite v7 (`^7.3.1`) for tooling, Next.js 16 for apps, and React 19. All workspaces must adhere to these versions to ensure compatibility.
+**Standard:** The project standardizes on Vite v7 (`^7.3.1`) for tooling, Next.js v16.x for apps, and React v19.x. All workspaces must adhere to these versions to ensure compatibility.
 **Zod:** The project uses Zod v4.3.5. Custom error messages must be passed as the first string argument to the validator (e.g., `z.string("Error")`) rather than using an options object.
 
 ### 2026-01-20 - Middleware Pattern
@@ -89,8 +89,8 @@ Rule: Do not leave flat component files in the root of `packages/ui/src/`. Creat
 **Action:** When rendering lists that can be empty, always include a dedicated empty state component with an icon, explanation, and a call-to-action button.
 
 ### 2025-05-21 - Button Component Loading State
-**Learning:** The `Button` component from `@repo/ui` prepends a spinner when `isLoading` is true but keeps the children visible. For buttons with icons, this results in two icons (spinner + original icon) unless the original icon is manually hidden.
-**Action:** When adding loading states to icon-buttons, conditionally render the original icon: `{!loading && <Icon />}`. Update: The component now often hides children content when `isLoading` is true to reduce clutter.
+**Learning:** Earlier versions of the `Button` component from `@repo/ui` prepended a spinner when `isLoading` was true but kept the children visible. For buttons with icons, this resulted in two icons (spinner + original icon) unless the original icon was manually hidden. The component has since been updated and now typically hides children content when `isLoading` is true to reduce clutter.
+**Action:** Assume that `Button` will hide its children when `isLoading` is true. For icon-only buttons or configurations where children remain visible while loading, avoid duplicate icons by conditionally rendering the original icon (for example, `{!loading && <Icon />}`) or by moving the icon into a dedicated `icon` prop if one is available.
 
 ### 2026-01-20 - Focus Ring Standards
 **Standard:** Interactive elements nested within Input components (e.g., password toggle buttons) must use `focus-visible` ring styles (`ring-2`, `ring-brand-pink`) to ensure accessibility, replacing subtle text color changes.
@@ -116,7 +116,7 @@ Rule: Do not leave flat component files in the root of `packages/ui/src/`. Creat
 **Action:** Do not nest `<button>` inside `<Link>`. Instead, apply button utility classes directly to the `<Link>` component or use `asChild` if using a UI library component that supports polymorphism.
 
 ### 2025-05-23 - Standardizing Overlay Styles
-**Learning:** `Sheet` and `Modal` components used different overlay styles (`bg-black/60 backdrop-blur-sm`) and consistent close button styling.
+**Learning:** `Sheet` and `Modal` components used different overlay styles and inconsistent close button styling.
 **Action:** Standardized on `bg-black/60 backdrop-blur-sm` for a more modern, consistent look across all overlay components. Also aligned close button interactions to use `hover:text-brand-pink`.
 
 ### 2026-01-20 - Ghost Button Overrides
@@ -159,7 +159,7 @@ Rule: The root `README.md` must serve as the single source of truth for ALL appl
 
 ### 2025-05-24 - Ghost Environment Variables
 
-Insight: `STRIPE_SECRET_KEY` was present in `apps/admin/.env.example` but unused in the codebase, while `NEXT_PUBLIC_SITE_URL` was required by validation but missing.
+Insight: At this time, `STRIPE_SECRET_KEY` was present in `apps/admin/.env.example` but unused in the codebase, while `NEXT_PUBLIC_SITE_URL` was required by validation but missing. These specific discrepancies have since been corrected; this entry remains to document the incident and its takeaway.
 Rule: Routinely audit `.env.example` files against the strict Zod validation schemas in `packages/env` to prevent "ghost" variables and missing requirements.
 
 ### 2026-01-20 - Code Commenting
