@@ -56,6 +56,11 @@ export function formatDate(date: string | Date): string {
  * formatCompactNumber(1200) // -> "1.2K"
  */
 export function formatCompactNumber(number: number): string {
+  // Validate input to avoid formatting NaN, Infinity, or non-numeric values
+  if (!Number.isFinite(number)) {
+    return '';
+  }
+
   return Intl.NumberFormat('en-US', {
     notation: 'compact',
     maximumFractionDigits: 1,
