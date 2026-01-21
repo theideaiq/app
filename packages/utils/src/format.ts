@@ -36,12 +36,12 @@ export function formatCurrency(
  * @returns A formatted date string (e.g., "Jan 15, 2026").
  */
 export function formatDate(date: string | Date): string {
-  if (!date) return '';
+  if (!date || (date instanceof Date && isNaN(date.getTime()))) return '';
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  }).format(new Date(date));
+  }).format(date instanceof Date ? date : new Date(date));
 }
 
 /**
@@ -56,6 +56,11 @@ export function formatDate(date: string | Date): string {
  * formatCompactNumber(1200) // -> "1.2K"
  */
 export function formatCompactNumber(number: number): string {
+  // Validate input to avoid formatting NaN, Infinity, or non-numeric values
+  if (!Number.isFinite(number)) {
+    return '';
+  }
+
   return Intl.NumberFormat('en-US', {
     notation: 'compact',
     maximumFractionDigits: 1,
