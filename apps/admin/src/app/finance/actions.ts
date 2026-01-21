@@ -21,6 +21,30 @@ interface PnLResult {
   breakdown: Record<string, number>; // Category breakdown
 }
 
+interface LedgerLineWithJoins {
+  debit: number | string | null;
+  credit: number | string | null;
+  chart_of_accounts:
+    | {
+        name: string;
+        type: string;
+        category: string | null;
+      }
+    | Array<{
+        name: string;
+        type: string;
+        category: string | null;
+      }>
+    | null;
+  ledger_entries?:
+    | {
+        transaction_date: string;
+      }
+    | Array<{
+        transaction_date: string;
+      }>;
+}
+
 /**
  * Calculates Profit and Loss for a given period.
  */
@@ -59,7 +83,7 @@ export async function getProfitAndLoss(
   let expenses = 0;
   const breakdown: Record<string, number> = {};
 
-  lines.forEach((line: any) => {
+  lines.forEach((line: LedgerLineWithJoins) => {
     const rawAccount = line.chart_of_accounts;
     const account = Array.isArray(rawAccount) ? rawAccount[0] : rawAccount;
 
@@ -156,7 +180,12 @@ export async function getChartOfAccounts(): Promise<ChartOfAccount[]> {
     .from('chart_of_accounts')
     .select('id, code, name, type, category')
     .order('code');
-  if (error) redirect('/login');
+  if (error) {
+    // Log the underlying error before redirecting for easier debugging
+    // biome-ignore lint/suspicious/noConsole: Log critical data fetching error
+    console.error('Error fetching chart of accounts:', error);
+    redirect('/login');
+  }
   return data as ChartOfAccount[];
 }
 
@@ -181,7 +210,15 @@ export async function createJournalEntry(
     .select('id, transaction_date, description')
     .single();
 
-  if (entryError) redirect('/login');
+  if (entryError) {
+    await logAdminAction('create_journal_entry_failed', 'finance', {
+      stage: 'entry_insert',
+      date,
+      description,
+      error: entryError.message ?? String(entryError),
+    });
+    redirect('/login');
+  }
 
   const linesToInsert = lines.map((line) => ({
     entry_id: entry.id,
