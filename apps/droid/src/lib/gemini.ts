@@ -57,7 +57,7 @@ export async function generateResponse(
 ): Promise<string> {
   try {
     const chat = ai.chats.create({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       history: history,
       config: {
         tools: tools,
