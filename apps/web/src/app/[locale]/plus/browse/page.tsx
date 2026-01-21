@@ -13,10 +13,18 @@ import { createClient } from '@/lib/supabase/client';
 
 const supabase = createClient();
 
+type RentalCatalogItem = {
+  id: number;
+  title: string;
+  category: string;
+  daily_rate: number;
+  image_url: string | null;
+  description: string | null;
+};
+
 export default function PlusBrowsePage() {
   const router = useRouter();
-  // biome-ignore lint/suspicious/noExplicitAny: migration
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<RentalCatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [rentingId, setRentingId] = useState<number | null>(null);
 
@@ -36,8 +44,7 @@ export default function PlusBrowsePage() {
     fetchCatalog();
   }, [fetchCatalog]);
 
-  // biome-ignore lint/suspicious/noExplicitAny: migration
-  const handleRent = async (item: any) => {
+  const handleRent = async (item: RentalCatalogItem) => {
     setRentingId(item.id);
 
     // 1. Check Login
