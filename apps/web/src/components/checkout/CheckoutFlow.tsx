@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Lock, MapPin, CreditCard, Loader2 } from 'lucide-react';
+import { Check, Lock, CreditCard, Loader2 } from 'lucide-react';
 import { Button, Input, Card } from '@repo/ui';
 import { useCartStore } from '@/stores/cart-store';
 import { toast } from 'react-hot-toast';
