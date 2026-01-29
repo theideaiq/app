@@ -21,15 +21,12 @@ export function SubscriptionCard({
   isSelected,
   onSelect,
 }: SubscriptionCardProps) {
-  // biome-ignore lint/a11y/useKeyWithClickEvents: Interactive card wrapper
   return (
-    <div
+    <button
+      type="button"
       onClick={onSelect}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && onSelect?.()}
       className={`
-        relative overflow-hidden rounded-2xl border-2 p-6 transition-all cursor-pointer
+        w-full text-left relative overflow-hidden rounded-2xl border-2 p-6 transition-all cursor-pointer
         ${
           isSelected
             ? 'border-[#facc15] bg-[#facc15]/5'
@@ -71,6 +68,6 @@ export function SubscriptionCard({
           </div>
         ))}
       </div>
-    </div>
+    </button>
   );
 }

@@ -57,7 +57,7 @@ export function CheckoutFlow() {
         >
           <button
             type="button"
-            className="w-full p-6 flex items-center justify-between cursor-pointer text-left appearance-none bg-transparent border-none"
+            className="w-full p-6 flex items-center justify-between cursor-pointer text-left bg-transparent border-none"
             onClick={() => setStep(1)}
           >
             <div className="flex items-center gap-4">
