@@ -13,6 +13,8 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('next/image', () => ({
+  // biome-ignore lint/suspicious/noExplicitAny: Mock component props
+  // biome-ignore lint/a11y/useAltText: Mock component doesn't need valid alt
   default: (props: any) => <img {...props} />,
 }));
 
@@ -42,6 +44,7 @@ describe('CartDrawer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default UI Store state
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking internal module type
     (uiStoreModule.useUIStore as any).mockImplementation((selector: any) => {
       const state = {
         isCartOpen: true,
@@ -52,7 +55,9 @@ describe('CartDrawer', () => {
   });
 
   it('renders empty cart message when no items', () => {
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking internal module type
     (cartStoreModule.useCartStore as any).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking selector
       (selector: any) => {
         const state = {
           items: [],
@@ -81,7 +86,9 @@ describe('CartDrawer', () => {
       },
     ];
 
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking internal module type
     (cartStoreModule.useCartStore as any).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking selector
       (selector: any) => {
         const state = {
           items,
@@ -111,7 +118,9 @@ describe('CartDrawer', () => {
         quantity: 1,
       },
     ];
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking internal module type
     (cartStoreModule.useCartStore as any).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking selector
       (selector: any) => {
         const state = {
           items,
@@ -143,7 +152,9 @@ describe('CartDrawer', () => {
         quantity: 2,
       },
     ];
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking internal module type
     (cartStoreModule.useCartStore as any).mockImplementation(
+      // biome-ignore lint/suspicious/noExplicitAny: Mocking selector
       (selector: any) => {
         const state = {
           items,
