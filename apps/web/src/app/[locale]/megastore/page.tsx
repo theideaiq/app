@@ -59,14 +59,7 @@ export default function MegastorePage() {
     <div className="min-h-screen bg-brand-bg pt-20 pb-24">
       {/* 1. HERO */}
       <section className="relative h-[50vh] md:h-[60vh] overflow-hidden flex items-center mx-4 rounded-3xl mt-4">
-        <Image
-          src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070"
-          alt="Megastore Background"
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 100vw"
-          className="object-cover object-center opacity-60"
-        />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070')] bg-cover bg-center opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-8 w-full">
@@ -140,12 +133,11 @@ export default function MegastorePage() {
       <section className="max-w-7xl mx-auto px-4 py-12">
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
-            {filteredProducts.map((product, i) => (
+            {filteredProducts.map((product) => (
               <div key={product.id} className="h-[420px]">
                 <ProductCard
                   product={product}
                   onAddToCart={(e) => handleQuickAdd(e, product)}
-                  priority={i < 4}
                 />
               </div>
             ))}
