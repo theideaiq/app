@@ -57,6 +57,7 @@ jobs:
           WAYL_WEBHOOK_SECRET: "dummy"
           ZAIN_SECRET_KEY: "dummy"
           SUPABASE_SERVICE_ROLE_KEY: "dummy"
+          GEMINI_API_KEY: "dummy"
         run: pnpm turbo check typecheck test
 
   build:
@@ -110,6 +111,7 @@ jobs:
           WAYL_WEBHOOK_SECRET: "dummy"
           ZAIN_SECRET_KEY: "dummy"
           SUPABASE_SERVICE_ROLE_KEY: "dummy"
+          GEMINI_API_KEY: "dummy"
         run: pnpm turbo build
 
   e2e:
