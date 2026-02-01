@@ -105,6 +105,11 @@ jobs:
           WAYL_SECRET_KEY: "dummy_wayl_key"
           WAYL_WEBHOOK_SECRET: "dummy_wayl_webhook"
           SUPABASE_SERVICE_ROLE_KEY: "dummy_service_role"
+          GEMINI_API_KEY: "dummy_gemini_key"
+          TELEGRAM_BOT_TOKEN: "dummy_telegram_token"
+          UPSTASH_REDIS_REST_URL: "https://dummy-redis.upstash.io"
+          UPSTASH_REDIS_REST_TOKEN: "dummy_redis_token"
+          WEB_APP_URL: "https://example.com"
         run: pnpm turbo build
 
   e2e:
