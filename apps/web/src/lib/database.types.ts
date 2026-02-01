@@ -34,10 +34,11 @@ export interface Database {
           name: string;
           // ... (omitting insert types for brevity as we primarily read in frontend)
         };
-        Update: {
-          // ...
-        };
+        // biome-ignore lint/complexity/noBannedTypes: Placeholder
+        Update: {};
       };
+      // biome-ignore lint/complexity/noBannedTypes: Placeholder
+      dummy: {};
       product_variants: {
         Row: {
           id: string;

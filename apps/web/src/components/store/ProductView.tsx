@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Star, Share2, Heart, CheckCircle2 } from 'lucide-react';
+import { Star, Heart, CheckCircle2 } from 'lucide-react';
 import { Button } from '@repo/ui';
 import { VariantSelector } from '@/components/ui/VariantSelector';
-import type { Product, ProductVariant } from '@/services/products';
+import type { Product } from '@/services/products';
 import { useCartStore } from '@/stores/cart-store';
 import { useUIStore } from '@/stores/ui-store';
 import { toast } from 'react-hot-toast';
@@ -17,7 +17,7 @@ interface ProductViewProps {
 
 export function ProductView({ product }: ProductViewProps) {
   const [selectedImage, setSelectedImage] = useState(product.image);
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [_selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const { addItem } = useCartStore();
   const { openCart } = useUIStore();
 
