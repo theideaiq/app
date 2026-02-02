@@ -36,6 +36,7 @@ export interface Database {
         };
         Update: {
           // ...
+          // biome-ignore lint/complexity/noBannedTypes: Schema definition
         };
       };
       product_variants: {
