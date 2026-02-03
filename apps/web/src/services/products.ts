@@ -1,6 +1,6 @@
 import { Logger } from '@repo/utils';
+import type { Database } from '@/lib/database.types';
 import { createClient } from '@/lib/supabase/client';
-import type { Database, Json } from '@/lib/database.types';
 
 type DBProduct = Database['public']['Tables']['products']['Row'] & {
   reviews?: { rating: number }[];
@@ -29,9 +29,11 @@ export interface Product {
   images: string[];
   isVerified: boolean;
   description: string;
+  // biome-ignore lint/suspicious/noExplicitAny: details is a flexible JSON object
   details: Record<string, any>;
   variants: ProductVariant[];
   stock: number;
+  reviewCount: number;
 }
 
 /**
@@ -49,7 +51,7 @@ export async function getProducts(limit = 20): Promise<Product[]> {
 
     if (error) {
       Logger.error('Error fetching products:', error);
-      return [];
+      throw error;
     }
 
     if (!data) return [];
@@ -76,6 +78,7 @@ export async function getProducts(limit = 20): Promise<Product[]> {
         details: {},
         variants: [],
         stock: 10,
+        reviewCount: 124,
       },
       {
         id: '2',
@@ -94,6 +97,7 @@ export async function getProducts(limit = 20): Promise<Product[]> {
         details: {},
         variants: [],
         stock: 5,
+        reviewCount: 42,
       },
     ];
   }
@@ -114,7 +118,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
     if (error) {
       Logger.error(`Error fetching product [${slug}]:`, error);
-      return null;
+      throw error;
     }
 
     if (!data) return null;
@@ -138,6 +142,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       isVerified: true,
       description: 'The best gaming mouse.',
       details: {},
+      reviewCount: 124,
       variants: [
         {
           id: 'v1',
@@ -194,8 +199,10 @@ function mapDBProductToUI(item: DBProduct): Product {
     images: item.images || (item.image_url ? [item.image_url] : []),
     isVerified: item.is_verified,
     description: item.description || '',
+    // biome-ignore lint/suspicious/noExplicitAny: details is a flexible JSON object
     details: (item.details as Record<string, any>) || {},
     variants,
     stock: item.stock_count,
+    reviewCount: ratings.length,
   };
 }
