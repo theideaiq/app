@@ -46,8 +46,9 @@ export default function AuthPage() {
         toast.success('Account created! Please check your email.');
         setMode('login');
       }
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      // biome-ignore lint/suspicious/noExplicitAny: Error handling
+      toast.error((err as any).message);
     } finally {
       setLoading(false);
     }
@@ -128,7 +129,10 @@ export default function AuthPage() {
                   className="overflow-hidden"
                 >
                   <div className="mb-4">
-                    <label className="text-sm text-slate-400 mb-1 block">
+                    <label
+                      htmlFor="full-name"
+                      className="text-sm text-slate-400 mb-1 block"
+                    >
                       Full Name
                     </label>
                     <div className="relative">
