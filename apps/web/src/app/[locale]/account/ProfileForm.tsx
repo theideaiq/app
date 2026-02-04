@@ -14,8 +14,8 @@ export default function ProfileForm({ profile }: { profile: any }) {
     try {
       await updateProfile(formData);
       toast.success('Profile updated');
-    } catch (e: unknown) {
-      toast.error((e as Error).message);
+    } catch (e: any) {
+      toast.error(e.message);
     } finally {
       setLoading(false);
     }
