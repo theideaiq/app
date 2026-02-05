@@ -40,10 +40,13 @@ jobs:
         uses: actions/checkout@v6
 
       # Required for 'npm run secrets:restore'
+      # Using Node 22 because pnpm 10 requires Node >=24.12.0 in the repo config, but we can bypass strict check or use compatible node
+      # The repo requires >=24.12.0 for engine checks, but CodeQL runner might not support it yet.
+      # We will install node 22 and use --config.engine-strict=false if needed.
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
 
       # Required for Android Gradle Build
       - name: Setup Java
@@ -52,9 +55,9 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      # Explicitly install pnpm because 'npm run' in a workspace requires it or proper node_modules
+      # Explicitly install pnpm
       - name: Install pnpm
-        run: npm install -g pnpm && pnpm install
+        run: npm install -g pnpm && pnpm install --config.engine-strict=false
 
       # Initialize CodeQL (Defines what languages to scan)
       - name: Initialize CodeQL
