@@ -1,8 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
@@ -21,7 +20,7 @@ import { Label } from '@/components/ui/label';
 export default function MFAPage() {
   const t = useTranslations('Auth');
   const router = useRouter();
-  const [step, setStep] = useState<'enroll' | 'verify'>('enroll');
+  const [step, _setStep] = useState<'enroll' | 'verify'>('enroll');
   const [qr, setQr] = useState<string>('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,8 +42,8 @@ export default function MFAPage() {
       toast.success(t('mfa_enabled'));
       router.push('/');
       router.refresh();
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }

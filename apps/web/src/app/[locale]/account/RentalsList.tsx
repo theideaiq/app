@@ -39,17 +39,21 @@ export default function RentalsList({ rentals }: { rentals: any[] }) {
           </div>
 
           <div className="flex justify-between items-center text-sm">
-            <span className={`px-2 py-1 rounded-full ${
-              rental.status === 'active' ? 'bg-green-100 text-green-800' :
-              rental.status === 'overdue' ? 'bg-red-100 text-red-800' :
-              'bg-gray-100 text-gray-800'
-            }`}>
+            <span
+              className={`px-2 py-1 rounded-full ${
+                rental.status === 'active'
+                  ? 'bg-green-100 text-green-800'
+                  : rental.status === 'overdue'
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-gray-100 text-gray-800'
+              }`}
+            >
               {t(`status.${rental.status}`)}
             </span>
             <span className="font-medium">
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
-                currency: 'USD'
+                currency: 'USD',
               }).format(rental.total_amount)}
             </span>
           </div>

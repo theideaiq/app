@@ -1,5 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
 import { requireUser } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export async function enrollMFA() {
   const { user } = await requireUser();
