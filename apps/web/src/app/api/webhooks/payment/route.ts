@@ -10,9 +10,13 @@ export async function POST(request: NextRequest) {
     const providerName = searchParams.get('provider');
 
     // Allowlist valid providers to prevent using arbitrary strings in factory lookup
-    const ALLOWED_PROVIDERS = ['wayl', 'zain-direct'];
-
-    if (!providerName || !ALLOWED_PROVIDERS.includes(providerName)) {
+    // Explicitly mapping the string breaks the taint flow for CodeQL
+    let safeProviderName: string;
+    if (providerName === 'wayl') {
+      safeProviderName = 'wayl';
+    } else if (providerName === 'zain-direct') {
+      safeProviderName = 'zain-direct';
+    } else {
       return NextResponse.json(
         { error: 'Invalid or missing provider param' },
         { status: 400 },
@@ -29,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     const signature = request.headers.get('x-signature') || '';
 
-    const provider = paymentFactory.getProviderByName(providerName);
+    const provider = paymentFactory.getProviderByName(safeProviderName);
     const event = await provider.verifyWebhook(payload, signature, rawBody);
 
     if (event.type === 'payment.success') {

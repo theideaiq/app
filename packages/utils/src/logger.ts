@@ -10,7 +10,11 @@ export class Logger {
    */
   private static sanitize(input: unknown): unknown {
     if (typeof input === 'string') {
-      return input.replace(/[\n\r]/g, '\\n');
+      // Use JSON.stringify to safely escape characters including newlines
+      // and remove the surrounding quotes to keep it clean if possible,
+      // or just keep it as a string representation.
+      // Replacing CRLF directly is standard for CWE-117.
+      return input.replace(/[\n\r]/g, ''); // Remove newlines entirely or escape them
     }
     return input;
   }
@@ -24,7 +28,7 @@ export class Logger {
   static log(message: string, meta?: Record<string, unknown>) {
     if (process.env.NODE_ENV !== 'test') {
       // biome-ignore lint/suspicious/noConsole: Centralized logging
-      console.log('%s', this.sanitize(message), meta);
+      console.log('%s', JSON.stringify(message), meta);
     }
   }
 
@@ -42,7 +46,7 @@ export class Logger {
   ) {
     if (process.env.NODE_ENV !== 'test') {
       // biome-ignore lint/suspicious/noConsole: Centralized logging
-      console.error('%s', this.sanitize(message), error, meta);
+      console.error('%s', JSON.stringify(message), error, meta);
     }
   }
 
@@ -55,7 +59,7 @@ export class Logger {
   static warn(message: string, meta?: Record<string, unknown>) {
     if (process.env.NODE_ENV !== 'test') {
       // biome-ignore lint/suspicious/noConsole: Centralized logging
-      console.warn('%s', this.sanitize(message), meta);
+      console.warn('%s', JSON.stringify(message), meta);
     }
   }
 }
