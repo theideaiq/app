@@ -16,13 +16,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const payload = await request.json();
+    const rawBody = await request.text();
+    let payload;
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
 
-    // In a real scenario, we would retrieve the signature from headers
-    // const signature = request.headers.get('x-signature');
+    const signature = request.headers.get('x-signature') || '';
 
     const provider = paymentFactory.getProviderByName(providerName);
-    const event = await provider.verifyWebhook(payload);
+    const event = await provider.verifyWebhook(payload, signature, rawBody);
 
     if (event.type === 'payment.success') {
       const supabase = createServiceRoleClient(
