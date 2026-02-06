@@ -22,10 +22,11 @@ export function SubscriptionCard({
   onSelect,
 }: SubscriptionCardProps) {
   return (
-    <div
+    <button
+      type="button"
       onClick={onSelect}
       className={`
-        relative overflow-hidden rounded-2xl border-2 p-6 transition-all cursor-pointer
+        relative w-full text-left overflow-hidden rounded-2xl border-2 p-6 transition-all cursor-pointer
         ${
           isSelected
             ? 'border-[#facc15] bg-[#facc15]/5'
@@ -35,7 +36,9 @@ export function SubscriptionCard({
     >
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
+          <span className="text-xl font-bold text-slate-900 block text-left">
+            {plan.name}
+          </span>
           {plan.description && (
             <p className="text-sm text-slate-500 mt-1">{plan.description}</p>
           )}
@@ -66,6 +69,6 @@ export function SubscriptionCard({
           </div>
         ))}
       </div>
-    </div>
+    </button>
   );
 }
