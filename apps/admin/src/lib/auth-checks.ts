@@ -33,7 +33,7 @@ export async function requireAdmin() {
     throw new Error('Unauthorized: User invalid or banned');
   }
 
-  // Use the shared utility function to check for admin access
+  // Use local helper or duplicated logic since this file is server-only
   if (!checkAdminAccess(requester.role)) {
     throw new Error('Unauthorized: Insufficient permissions');
   }
@@ -83,8 +83,7 @@ export async function requireSuperAdmin() {
   return { supabase, user, requester };
 }
 
-// Local helper to avoid importing from client-safe file if not needed,
-// or just copy the logic here since this file is server-only.
+// Local helper to avoid importing from client-safe file if not needed
 function checkAdminAccess(role?: string | null): boolean {
   if (!role) return false;
   const normalizedRole = role.toLowerCase();
