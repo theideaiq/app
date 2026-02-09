@@ -1,6 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCartStore } from './cart-store';
 
+const item1 = {
+  id: '1',
+  productId: 'p1',
+  title: 'Apple',
+  price: 10,
+  image: 'apple.png',
+};
+
+const item2 = {
+  id: '2',
+  productId: 'p2',
+  title: 'Banana',
+  price: 20,
+  image: 'banana.png',
+};
+
 describe('Cart Store', () => {
   // Reset store before each test to ensure isolation
   beforeEach(() => {
@@ -20,54 +36,56 @@ describe('Cart Store', () => {
   it('should add items to the cart', () => {
     const { addItem } = useCartStore.getState();
 
-    addItem('apple');
-    expect(useCartStore.getState().items).toEqual(['apple']);
+    addItem(item1);
+    expect(useCartStore.getState().items).toEqual([{ ...item1, quantity: 1 }]);
 
-    addItem('banana');
-    expect(useCartStore.getState().items).toEqual(['apple', 'banana']);
+    addItem(item2);
+    expect(useCartStore.getState().items).toEqual([
+      { ...item1, quantity: 1 },
+      { ...item2, quantity: 1 },
+    ]);
   });
 
   it('should remove items from the cart', () => {
     const { addItem, removeItem } = useCartStore.getState();
 
-    addItem('apple');
-    addItem('banana');
+    addItem(item1);
+    addItem(item2);
 
-    removeItem('apple');
-    expect(useCartStore.getState().items).toEqual(['banana']);
+    removeItem(item1.id);
+    expect(useCartStore.getState().items).toEqual([{ ...item2, quantity: 1 }]);
   });
 
   it('should clear the cart', () => {
     const { addItem, clearCart } = useCartStore.getState();
 
-    addItem('apple');
-    addItem('banana');
+    addItem(item1);
+    addItem(item2);
 
     clearCart();
     expect(useCartStore.getState().items).toEqual([]);
   });
 
-  it('should handle duplicate items correctly (removes all instances)', () => {
-    // Current behavior documentation: removing an item removes ALL instances of that value
-    const { addItem, removeItem } = useCartStore.getState();
+  it('should handle duplicate items correctly (increments quantity)', () => {
+    const { addItem } = useCartStore.getState();
 
-    addItem('apple');
-    addItem('apple');
-    expect(useCartStore.getState().items).toEqual(['apple', 'apple']);
-
-    removeItem('apple');
-    expect(useCartStore.getState().items).toEqual([]);
+    addItem(item1);
+    addItem(item1);
+    expect(useCartStore.getState().items).toEqual([{ ...item1, quantity: 2 }]);
   });
 
   it('should persist state to localStorage', () => {
     const { addItem } = useCartStore.getState();
-    addItem('persistent-item');
+    addItem(item1);
 
-    const stored = localStorage.getItem('cart-storage');
+    // Mock localStorage or rely on jsdom behavior
+    // zustand persist middleware writes async? usually sync with localStorage
+    // But checking key might depend on implementation details
+    const stored = localStorage.getItem('cart-storage-v2');
     expect(stored).toBeDefined();
     if (stored) {
       const parsed = JSON.parse(stored);
-      expect(parsed.state.items).toEqual(['persistent-item']);
+      expect(parsed.state.items).toEqual([{ ...item1, quantity: 1 }]);
     }
   });
 });
