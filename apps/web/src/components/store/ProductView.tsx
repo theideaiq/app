@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Star, Share2, Heart, CheckCircle2 } from 'lucide-react';
@@ -17,7 +17,6 @@ interface ProductViewProps {
 
 export function ProductView({ product }: ProductViewProps) {
   const [selectedImage, setSelectedImage] = useState(product.image);
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const { addItem } = useCartStore();
   const { openCart } = useUIStore();
 
@@ -30,29 +29,35 @@ export function ProductView({ product }: ProductViewProps) {
   const hasVariants = product.variants && product.variants.length > 0;
 
   // Extract unique attributes (e.g. Color, Size)
-  const attributes: Record<string, string[]> = {};
-  if (hasVariants) {
-    product.variants.forEach((v) => {
-      Object.entries(v.attributes).forEach(([key, val]) => {
-        if (!attributes[key]) attributes[key] = [];
-        if (!attributes[key].includes(val)) attributes[key].push(val);
+  const attributes = useMemo(() => {
+    const attrs: Record<string, string[]> = {};
+    if (hasVariants) {
+      product.variants.forEach((v) => {
+        Object.entries(v.attributes).forEach(([key, val]) => {
+          if (!attrs[key]) attrs[key] = [];
+          if (!attrs[key].includes(val)) attrs[key].push(val);
+        });
       });
-    });
-  }
+    }
+    return attrs;
+  }, [hasVariants, product.variants]);
 
   // State for selections
   const [selections, setSelections] = useState<Record<string, string>>({});
 
-  const handleAttributeChange = (key: string, value: string) => {
-    setSelections((prev) => ({ ...prev, [key]: value }));
-    // Try to find matching image
-    const matchingVariant = product.variants.find(
-      (v) => v.attributes[key] === value,
-    );
-    if (matchingVariant && matchingVariant.image) {
-      setSelectedImage(matchingVariant.image);
-    }
-  };
+  const handleAttributeChange = useCallback(
+    (key: string, value: string) => {
+      setSelections((prev) => ({ ...prev, [key]: value }));
+      // Try to find matching image
+      const matchingVariant = product.variants.find(
+        (v) => v.attributes[key] === value,
+      );
+      if (matchingVariant && matchingVariant.image) {
+        setSelectedImage(matchingVariant.image);
+      }
+    },
+    [product.variants],
+  );
 
   const handleAddToCart = () => {
     // Validate selections if needed
