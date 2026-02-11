@@ -1,3 +1,4 @@
+import type { NextRequest } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/navigation';
 
@@ -8,8 +9,7 @@ const intlMiddleware = createMiddleware({
 });
 
 // 2. Export it as 'proxy' to satisfy Next.js 15+
-// biome-ignore lint/suspicious/noExplicitAny: migration
-export default function proxy(request: any) {
+export default function proxy(request: NextRequest) {
   return intlMiddleware(request);
 }
 
