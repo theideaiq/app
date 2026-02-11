@@ -9,94 +9,128 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      products: {
+      carts: {
         Row: {
-          id: string;
-          name: string;
-          description: string | null;
-          price: number;
-          image_url: string | null;
-          type: 'sale' | 'rental' | 'auction'; // inferred from context
-          category: string; // inferred
-          stock_count: number;
-          rental_tier: string | null;
           created_at: string;
+          id: string;
+          status: string;
           updated_at: string;
-          details: Json;
-          condition: 'new' | 'used' | 'refurbished' | 'open_box'; // inferred
-          seller: string;
-          is_verified: boolean;
-          slug: string | null;
-          images: string[] | null;
+          user_id: string;
         };
         Insert: {
+          created_at?: string;
           id?: string;
-          name: string;
-          // ... (omitting insert types for brevity as we primarily read in frontend)
+          status?: string;
+          updated_at?: string;
+          user_id: string;
         };
         Update: {
-          // ...
+          created_at?: string;
+          id?: string;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
         };
-      };
-      product_variants: {
-        Row: {
-          id: string;
-          product_id: string;
-          sku: string | null;
-          stock_count: number | null;
-          price_override: number | null;
-          attributes: Json; // e.g., { color: "Red", size: "L" }
-          image_url: string | null;
-        };
+        Relationships: [
+          {
+            foreignKeyName: "carts_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       cart_items: {
         Row: {
-          id: string;
           cart_id: string;
+          created_at: string;
+          id: string;
           product_id: string;
           quantity: number;
-        };
-      };
-      carts: {
-        Row: {
-          id: string;
-          user_id: string | null;
-        };
-      };
-      orders: {
-        Row: {
-          id: string;
-          user_id: string | null;
-          status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
-          total_amount: number;
-          shipping_address: Json | null;
-          tracking_number: string | null;
-          created_at: string;
-          gateway_link_id: string | null;
-          gateway_provider: string | null;
-          gateway_metadata: Json | null;
-        };
-      };
-      profiles: {
-        Row: {
-          id: string;
-          email: string | null;
-          full_name: string | null;
-          avatar_url: string | null;
-          // ... other fields
-        };
-      };
-      rentals: {
-        Row: {
-          id: string;
-          user_id: string;
-          product_id: string;
-          due_date: string;
-          status: 'active' | 'returned' | 'overdue';
-          created_at: string;
           updated_at: string;
         };
+        Insert: {
+          cart_id: string;
+          created_at?: string;
+          id?: string;
+          product_id: string;
+          quantity: number;
+          updated_at?: string;
+        };
+        Update: {
+          cart_id?: string;
+          created_at?: string;
+          id?: string;
+          product_id?: string;
+          quantity?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_cart_id_fkey";
+            columns: ["cart_id"];
+            isOneToOne: false;
+            referencedRelation: "carts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          }
+        ];
       };
+      products: {
+        Row: {
+          category_id: string;
+          compare_at_price: number | null;
+          created_at: string;
+          description: string | null;
+          details: Json | null;
+          gallery_urls: string[] | null;
+          id: string;
+          image_url: string | null;
+          is_featured: boolean;
+          is_verified: boolean;
+          name: string;
+          price: number;
+          stock_count: number;
+          tags: string[] | null;
+          updated_at: string;
+        };
+        Insert: {
+          category_id: string;
+          compare_at_price?: number | null;
+          created_at?: string;
+          description?: string | null;
+          details?: Json | null;
+          gallery_urls?: string[] | null;
+          id?: string;
+          image_url?: string | null;
+          is_featured?: boolean;
+          is_verified?: boolean;
+          name: string;
+          price: number;
+          stock_count?: number;
+          tags?: string[] | null;
+          updated_at?: string;
+        };
+        // biome-ignore lint/complexity/noBannedTypes: Supabase generated type
+        Update: {};
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      // ... other tables
     };
     Views: {
       [_ in never]: never;
@@ -105,6 +139,9 @@ export interface Database {
       [_ in never]: never;
     };
     Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
       [_ in never]: never;
     };
   };

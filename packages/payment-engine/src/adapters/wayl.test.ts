@@ -55,7 +55,6 @@ describe('WaylAdapter', () => {
       const payload = { id: 'evt_123' }; // object, not string
       const signature = 'some_signature';
 
-      // @ts-expect-error Testing runtime check
       await expect(adapter.verifyWebhook(payload, signature)).rejects.toThrow(
         'Payload must be a raw string',
       );

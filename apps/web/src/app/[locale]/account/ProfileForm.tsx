@@ -1,10 +1,13 @@
 'use client';
 
+import { Button, Input } from '@repo/ui';
+import { User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { updateProfile } from '@/actions/account';
 
+// biome-ignore lint/suspicious/noExplicitAny: Temporary fix for strict linting on complex profile object
 export default function ProfileForm({ profile }: { profile: any }) {
   const t = useTranslations('Account');
   const [loading, setLoading] = useState(false);
@@ -14,40 +17,50 @@ export default function ProfileForm({ profile }: { profile: any }) {
     try {
       await updateProfile(formData);
       toast.success('Profile updated');
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'An error occurred';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form
-      action={handleSubmit}
-      className="bg-white p-6 rounded-lg shadow border border-slate-100 max-w-md"
-    >
-      <div className="mb-4">
-        <label
-          htmlFor="fullName"
-          className="block text-sm font-medium text-slate-700 mb-1"
-        >
-          Full Name
-        </label>
-        <input
-          type="text"
-          name="fullName"
-          id="fullName"
-          defaultValue={profile?.full_name || ''}
-          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+    <form action={handleSubmit} className="space-y-6">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <label
+            htmlFor="full_name"
+            className="text-sm text-slate-400 mb-1 block"
+          >
+            {t('fullName')}
+          </label>
+          <div className="relative">
+            <User
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+              size={18}
+            />
+            <Input
+              id="full_name"
+              name="full_name"
+              defaultValue={profile?.full_name}
+              className="pl-10 bg-white/5 border-white/10 text-slate-200 focus:border-brand-yellow/50"
+              placeholder="John Doe"
+            />
+          </div>
+        </div>
+        {/* Add more fields as needed */}
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-blue-600 text-white rounded-md py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? 'Saving...' : t('save')}
-      </button>
+
+      <div className="flex justify-end">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="bg-brand-yellow text-black hover:bg-brand-yellow/90"
+        >
+          {loading ? 'Saving...' : 'Save Changes'}
+        </Button>
+      </div>
     </form>
   );
 }
