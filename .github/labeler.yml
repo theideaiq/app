@@ -1,21 +1,16 @@
 web:
-  - changed-files:
-    - any-glob-to-any-file: 'apps/web/**/*'
+  - 'apps/web/**/*'
 
 admin:
-  - changed-files:
-    - any-glob-to-any-file: 'apps/admin/**/*'
+  - 'apps/admin/**/*'
 
 droid:
-  - changed-files:
-    - any-glob-to-any-file: 'apps/droid/**/*'
+  - 'apps/droid/**/*'
 
 core:
-  - changed-files:
-    - any-glob-to-any-file: 'packages/**/*'
+  - 'packages/**/*'
 
 ops:
-  - changed-files:
-    - any-glob-to-any-file: '.github/**/*'
-    - any-glob-to-any-file: 'turbo.json'
-    - any-glob-to-any-file: 'package.json'
+  - '.github/**/*'
+  - 'turbo.json'
+  - 'package.json'
