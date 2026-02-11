@@ -62,8 +62,8 @@ export async function getProducts(
 
   return data.map((item) => {
     // Transform variants
-    // biome-ignore lint/suspicious/noExplicitAny: Joined data type
     const variants =
+      // biome-ignore lint/suspicious/noExplicitAny: Joined data type
       (item.product_variants as any[])?.map((v) => ({
         id: v.id,
         name: v.name,
@@ -110,8 +110,8 @@ export async function getProduct(id: string): Promise<Product | null> {
 
   if (error || !data) return null;
 
-  // biome-ignore lint/suspicious/noExplicitAny: Joined data type
   const variants =
+    // biome-ignore lint/suspicious/noExplicitAny: Joined data type
     (data.product_variants as any[])?.map((v) => ({
       id: v.id,
       name: v.name,

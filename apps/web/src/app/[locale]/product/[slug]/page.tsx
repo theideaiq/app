@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 import { getProductBySlug } from '@/services/products';
 import { ProductView } from '@/components/store/ProductView';
 
-interface Props {
+type Props = {
   params: Promise<{ slug: string; locale: string }>;
-}
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${product.name} | Gamestore`,
-    description: product.description,
+    title: product.title,
+    description: product.description || `Buy ${product.title} at The IDEA.`,
     openGraph: {
-      images: product.images[0] ? [product.images[0]] : [],
+      images: product.image ? [product.image] : [],
     },
   };
 }
@@ -34,5 +34,9 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  return <ProductView product={product} />;
+  return (
+    <div className="container mx-auto px-4 py-8 md:py-16 pt-24">
+      <ProductView product={product} />
+    </div>
+  );
 }

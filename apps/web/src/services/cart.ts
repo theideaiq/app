@@ -1,136 +1,131 @@
+import { Logger } from '@repo/utils';
 import { createClient } from '@/lib/supabase/client';
 
+
 export interface CartItem {
-  id: string;
-  product_id: string;
+  id: string; // cart_item id
+  productId: string;
   quantity: number;
+  product: {
+    name: string;
+    price: number;
+    image: string;
+    slug: string;
+  };
 }
 
 /**
- * Add item to cart in Supabase
+ * Gets the current user's active cart or creates one.
  */
-export async function addToCartDB(
+async function getOrCreateCartId(
+  // biome-ignore lint/suspicious/noExplicitAny: Client type
+  supabase: any,
   userId: string,
-  item: { productId: string; quantity: number },
-) {
-  const supabase = createClient();
-  const cartId = await getOrCreateCartId(supabase, userId);
+): Promise<string | null> {
+  // 1. Check for existing cart
+  const { data: cart } = await supabase
+    .from('carts')
+    .select('id')
+    .eq('user_id', userId)
+    .single();
 
-  if (!cartId) return { error: 'Failed to create cart' };
+  if (cart) return cart.id;
+
+  // 2. Create new cart
+  const { data: newCart, error } = await supabase
+    .from('carts')
+    .insert({ user_id: userId })
+    .select('id')
+    .single();
+
+  if (error) {
+    Logger.error('Error creating cart:', error);
+    return null;
+  }
+  return newCart.id;
+}
+
+export async function fetchCartItems(): Promise<CartItem[]> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return []; // Guest cart handled by local storage (Zustand)
+
+  const { data: cart } = await supabase
+    .from('carts')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!cart) return [];
+
+  const { data: items, error } = await supabase
+    .from('cart_items')
+    .select('*, product:products(name, price, image_url, slug)')
+    .eq('cart_id', cart.id);
+
+  if (error) {
+    Logger.error('Error fetching cart items:', error);
+    return [];
+  }
+
+  // biome-ignore lint/suspicious/noExplicitAny: Joined data
+  return (items as any[]).map((item) => ({
+    id: item.id,
+    productId: item.product_id,
+    quantity: item.quantity,
+    product: {
+      name: item.product.name,
+      price: item.product.price,
+      image: item.product.image_url,
+      slug: item.product.slug,
+    },
+  }));
+}
+
+export async function addToCartDB(
+  productId: string,
+  quantity = 1,
+): Promise<boolean> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return false; // Indicate caller to use local store
+
+  const cartId = await getOrCreateCartId(supabase, user.id);
+  if (!cartId) return false;
 
   // Check if item exists
   const { data: existing } = await supabase
     .from('cart_items')
     .select('id, quantity')
     .eq('cart_id', cartId)
-    .eq('product_id', item.productId)
+    .eq('product_id', productId)
     .single();
 
   if (existing) {
-    return supabase
+    const { error } = await supabase
       .from('cart_items')
-      .update({ quantity: existing.quantity + item.quantity })
+      .update({ quantity: existing.quantity + quantity })
       .eq('id', existing.id);
+    return !error;
   }
 
-  return supabase.from('cart_items').insert({
+  const { error } = await supabase.from('cart_items').insert({
     cart_id: cartId,
-    product_id: item.productId,
-    quantity: item.quantity,
+    product_id: productId,
+    quantity,
   });
+
+  return !error;
 }
 
-/**
- * Sync local cart to DB on login
- */
-export async function syncCartToDB(userId: string, localItems: CartItem[]) {
+export async function removeFromCartDB(itemId: string): Promise<boolean> {
   const supabase = createClient();
-  const cartId = await getOrCreateCartId(supabase, userId);
-
-  if (!cartId) return;
-
-  // Simple sync: upsert all
-  const upserts = localItems.map((item) => ({
-    cart_id: cartId,
-    product_id: item.product_id, // Note: local might use 'productId'
-    quantity: item.quantity,
-  }));
-
-  if (upserts.length > 0) {
-    await supabase.from('cart_items').upsert(
-      upserts.map((u) => ({
-        ...u,
-        updated_at: new Date().toISOString(),
-      })),
-      { onConflict: 'cart_id,product_id' },
-    );
-  }
-}
-
-/**
- * Fetch cart from DB
- */
-export async function fetchCartDB(userId: string) {
-  const supabase = createClient();
-  const { data: cart } = await supabase
-    .from('carts')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('status', 'active')
-    .single();
-
-  if (!cart) return [];
-
-  const { data: items } = await supabase
-    .from('cart_items')
-    .select(`
-      id,
-      quantity,
-      product_id,
-      products (
-        name,
-        price,
-        image_url
-      )
-    `)
-    .eq('cart_id', cart.id);
-
-  if (!items) return [];
-
-  // biome-ignore lint/suspicious/noExplicitAny: Complex join type
-  return (items as any[]).map((item) => ({
-    id: item.id,
-    productId: item.product_id,
-    title: item.products?.name,
-    price: item.products?.price,
-    image: item.products?.image_url,
-    quantity: item.quantity,
-  }));
-}
-
-/**
- * Helper: Get or create active cart
- */
-async function getOrCreateCartId(
-  // biome-ignore lint/suspicious/noExplicitAny: Supabase client type
-  supabase: any,
-  userId: string,
-): Promise<string | null> {
-  const { data: cart } = await supabase
-    .from('carts')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('status', 'active')
-    .single();
-
-  if (cart) return cart.id;
-
-  const { data: newCart, error } = await supabase
-    .from('carts')
-    .insert({ user_id: userId, status: 'active' })
-    .select()
-    .single();
-
-  if (error) return null;
-  return newCart.id;
+  const { error } = await supabase.from('cart_items').delete().eq('id', itemId);
+  return !error;
 }

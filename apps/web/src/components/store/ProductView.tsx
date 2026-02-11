@@ -2,12 +2,12 @@
 
 import { Button } from '@repo/ui';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Heart, Share2, ShoppingCart, Star } from 'lucide-react';
+import { CheckCircle2, Heart, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { VariantSelector } from '@/components/ui/VariantSelector';
-import type { Product, ProductVariant } from '@/services/products';
+import type { Product } from '@/services/products';
 import { useCartStore } from '@/stores/cart-store';
 import { useUIStore } from '@/stores/ui-store';
 
@@ -17,7 +17,7 @@ interface ProductViewProps {
 
 export function ProductView({ product }: ProductViewProps) {
   const [selectedImage, setSelectedImage] = useState(product.image);
-  const [_selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [_selectedVariant, _setSelectedVariant] = useState<string | null>(null);
   const { addItem } = useCartStore();
   const { openCart } = useUIStore();
 
@@ -28,7 +28,6 @@ export function ProductView({ product }: ProductViewProps) {
   const attributes: Record<string, string[]> = {};
   if (hasVariants) {
     product.variants.forEach((v) => {
-      // biome-ignore lint/complexity/noForEach: Iterating over object entries
       Object.entries(v.attributes).forEach(([key, val]) => {
         if (!attributes[key]) attributes[key] = [];
         if (!attributes[key].includes(val)) attributes[key].push(val);
