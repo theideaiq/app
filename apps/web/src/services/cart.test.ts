@@ -1,7 +1,5 @@
-
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { addToCartDB } from './cart';
-import * as supabaseClient from '@/lib/supabase/client';
 
 // Mock the Supabase client
 const mockGetUser = vi.fn();
@@ -20,7 +18,9 @@ vi.mock('@/lib/supabase/client', () => ({
 }));
 
 // Helper to create a chainable query builder mock
+// biome-ignore lint/suspicious/noExplicitAny: Mocking complex fluent API requires any
 const createMockBuilder = (returnValue: any = {}) => {
+  // biome-ignore lint/suspicious/noExplicitAny: Mocking complex fluent API requires any
   const builder: any = {
     select: vi.fn().mockReturnThis(),
     insert: vi.fn().mockReturnThis(),
@@ -29,6 +29,8 @@ const createMockBuilder = (returnValue: any = {}) => {
     eq: vi.fn().mockReturnThis(),
     single: vi.fn().mockResolvedValue(returnValue),
     // Make the builder thenable so it can be awaited directly (for insert/update chains)
+    // biome-ignore lint/suspicious/noThenProperty: Mocking a thenable for await support
+    // biome-ignore lint/suspicious/noExplicitAny: Mocking resolve function type
     then: (resolve: any) => resolve(returnValue),
   };
   return builder;
@@ -68,7 +70,7 @@ describe('addToCartDB', () => {
 
     // Setup mockFrom implementation to return specific builders in order
     mockFrom
-      .mockReturnValueOnce(cartsBuilder)      // from('carts') - get cart
+      .mockReturnValueOnce(cartsBuilder) // from('carts') - get cart
       .mockReturnValueOnce(checkItemsBuilder) // from('cart_items') - check item
       .mockReturnValueOnce(insertItemsBuilder); // from('cart_items') - insert item
 
@@ -107,7 +109,7 @@ describe('addToCartDB', () => {
 
     // 3. Mock 'cart_items' check -> returns existing item
     const checkItemsBuilder = createMockBuilder({
-      data: { id: 'item-123', quantity: 5 }
+      data: { id: 'item-123', quantity: 5 },
     });
 
     // 4. Mock 'cart_items' update -> returns success
@@ -115,7 +117,7 @@ describe('addToCartDB', () => {
     const updateItemsBuilder = createMockBuilder({ error: null });
 
     mockFrom
-      .mockReturnValueOnce(cartsBuilder)      // from('carts')
+      .mockReturnValueOnce(cartsBuilder) // from('carts')
       .mockReturnValueOnce(checkItemsBuilder) // from('cart_items') - check
       .mockReturnValueOnce(updateItemsBuilder); // from('cart_items') - update
 
@@ -142,7 +144,9 @@ describe('addToCartDB', () => {
     const checkItemsBuilder = createMockBuilder({ data: null });
 
     // Insert fails
-    const insertItemsBuilder = createMockBuilder({ error: { message: 'DB Error' } });
+    const insertItemsBuilder = createMockBuilder({
+      error: { message: 'DB Error' },
+    });
 
     mockFrom
       .mockReturnValueOnce(cartsBuilder)
@@ -162,11 +166,13 @@ describe('addToCartDB', () => {
 
     // Item exists
     const checkItemsBuilder = createMockBuilder({
-      data: { id: 'item-123', quantity: 1 }
+      data: { id: 'item-123', quantity: 1 },
     });
 
     // Update fails
-    const updateItemsBuilder = createMockBuilder({ error: { message: 'DB Error' } });
+    const updateItemsBuilder = createMockBuilder({
+      error: { message: 'DB Error' },
+    });
 
     mockFrom
       .mockReturnValueOnce(cartsBuilder)
@@ -188,7 +194,9 @@ describe('addToCartDB', () => {
 
     const cartsCheckBuilder = createMockBuilder({ data: null }); // No existing cart
 
-    const cartsInsertBuilder = createMockBuilder({ error: { message: 'Create failed' } }); // Create failed
+    const cartsInsertBuilder = createMockBuilder({
+      error: { message: 'Create failed' },
+    }); // Create failed
 
     mockFrom
       .mockReturnValueOnce(cartsCheckBuilder) // Check existing
