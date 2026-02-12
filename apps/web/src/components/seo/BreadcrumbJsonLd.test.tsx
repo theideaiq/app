@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import BreadcrumbJsonLd from './BreadcrumbJsonLd';
 
 vi.mock('next/navigation', () => ({

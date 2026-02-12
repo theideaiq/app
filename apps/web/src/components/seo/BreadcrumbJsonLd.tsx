@@ -1,8 +1,8 @@
 'use client';
 
-import { safeJsonLdStringify } from '@/lib/json-ld';
 import { webEnv } from '@repo/env/web';
 import { usePathname } from 'next/navigation';
+import { safeJsonLdStringify } from '@/lib/json-ld';
 
 export default function BreadcrumbJsonLd() {
   const pathname = usePathname();
