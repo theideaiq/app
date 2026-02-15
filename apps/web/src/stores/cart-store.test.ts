@@ -78,7 +78,10 @@ describe('Cart Store', () => {
 
     // The store implementation increments quantity, it doesn't add duplicate item to array
     expect(useCartStore.getState().items).toHaveLength(1);
-    expect(useCartStore.getState().items[0]).toEqual({ ...ITEM_APPLE, quantity: 2 });
+    expect(useCartStore.getState().items[0]).toEqual({
+      ...ITEM_APPLE,
+      quantity: 2,
+    });
   });
 
   it('should persist state to localStorage', () => {
