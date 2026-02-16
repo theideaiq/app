@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-// biome-ignore lint/suspicious/noExplicitAny: rentals type is complex join
+// biome-ignore lint/suspicious/noExplicitAny: legacy rentals type
 export default function RentalsList({ rentals }: { rentals: any[] }) {
   const t = useTranslations('Account');
   const [selectedRental, setSelectedRental] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export default function RentalsList({ rentals }: { rentals: any[] }) {
         >
           <div className="flex items-center gap-4 mb-4">
             {rental.product?.image_url && (
-              // biome-ignore lint/performance/noImgElement: image src is external/dynamic
+              // biome-ignore lint/performance/noImgElement: next/image refactor out of scope
               <img
                 src={rental.product.image_url}
                 alt={rental.product.name}

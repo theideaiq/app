@@ -17,7 +17,7 @@ export interface CartItem {
  * Gets the current user's active cart or creates one.
  */
 async function getOrCreateCartId(
-  // biome-ignore lint/suspicious/noExplicitAny: supabase client type
+  // biome-ignore lint/suspicious/noExplicitAny: supabase dynamic typing
   supabase: any,
   userId: string,
 ): Promise<string | null> {
@@ -70,7 +70,7 @@ export async function fetchCartItems(): Promise<CartItem[]> {
     return [];
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: items type is complex join
+  // biome-ignore lint/suspicious/noExplicitAny: legacy items
   return (items as any[]).map((item) => ({
     id: item.id,
     productId: item.product_id,

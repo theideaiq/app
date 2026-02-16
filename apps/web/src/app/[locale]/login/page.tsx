@@ -45,12 +45,9 @@ export default function AuthPage() {
         toast.success('Account created! Please check your email.');
         setMode('login');
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error('An unexpected error occurred');
-      }
+      // biome-ignore lint/suspicious/noExplicitAny: error handling
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -132,7 +129,7 @@ export default function AuthPage() {
                 >
                   <div className="mb-4">
                     <label
-                      htmlFor="fullName"
+                      htmlFor="full-name"
                       className="text-sm text-slate-400 mb-1 block"
                     >
                       Full Name
@@ -143,7 +140,7 @@ export default function AuthPage() {
                         size={18}
                       />
                       <input
-                        id="fullName"
+                        id="full-name"
                         type="text"
                         required={mode === 'register'}
                         value={fullName}

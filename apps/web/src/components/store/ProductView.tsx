@@ -2,7 +2,7 @@
 
 import { Button } from '@repo/ui';
 import { motion } from 'framer-motion';
-import { Heart, Star } from 'lucide-react';
+import { CheckCircle2, Heart, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -130,8 +130,7 @@ export function ProductView({ product }: ProductViewProps) {
             {product.images?.map((img, i) => (
               <button
                 type="button"
-                // biome-ignore lint/suspicious/noArrayIndexKey: order is stable
-                key={i}
+                key={img}
                 onClick={() => setSelectedImage(img)}
                 className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-brand-yellow' : 'border-transparent opacity-50 hover:opacity-100'}`}
               >

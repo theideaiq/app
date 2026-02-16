@@ -3,7 +3,7 @@
 // UI Kit
 import { Badge, Button } from '@repo/ui';
 import { motion } from 'framer-motion';
-import { Book, Gamepad2, Laptop, Smartphone, Zap } from 'lucide-react';
+import { Book, Gamepad2, Laptop, Search, Smartphone, Zap } from 'lucide-react';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -28,7 +28,7 @@ export default function MegastorePage() {
   const addItem = useCartStore((s) => s.addItem);
   const { openCart } = useUIStore();
 
-  // biome-ignore lint/suspicious/noExplicitAny: product type is complex
+  // biome-ignore lint/suspicious/noExplicitAny: rapid prototyping
   const handleQuickAdd = (e: React.MouseEvent, product: any) => {
     e.preventDefault(); // Prevent navigation
     addItem({

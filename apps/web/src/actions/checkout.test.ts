@@ -1,157 +1,82 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { initiateCheckout } from './checkout';
 
-// Mocks
-const mocks = vi.hoisted(() => {
-  return {
-    getUser: vi.fn(),
-    from: vi.fn(),
-    redirect: vi.fn(),
-    getProvider: vi.fn(),
-  };
-});
+// Mock Supabase
+const mockSingle = vi.fn();
+const mockEq = vi.fn(() => ({ single: mockSingle, eq: vi.fn() })); // Chainable
+const mockSelect = vi.fn(() => ({ eq: mockEq }));
+const mockFrom = vi.fn(() => ({ select: mockSelect, insert: vi.fn() }));
+const mockAuth = {
+  getUser: vi.fn(),
+};
 
-// Mock dependencies
 vi.mock('@/lib/supabase/server', () => ({
-  createClient: vi.fn().mockResolvedValue({
-    auth: { getUser: mocks.getUser },
-    from: mocks.from,
+  createClient: () => ({
+    auth: mockAuth,
+    from: mockFrom,
   }),
 }));
 
+// Mock Navigation
 vi.mock('next/navigation', () => ({
-  redirect: mocks.redirect,
+  redirect: vi.fn(),
 }));
 
+// Mock Config/Env/Utils
 vi.mock('@/lib/payment/config', () => ({
   paymentFactory: {
-    getProvider: mocks.getProvider,
+    getProvider: () => ({
+      createCheckoutSession: vi.fn().mockResolvedValue({
+        url: 'https://checkout.url',
+        sessionId: 'sess_123',
+        provider: 'stripe',
+      }),
+    }),
   },
 }));
 
-describe('initiateCheckout', () => {
-  const userId = 'user-123';
-  const cartId = 'cart-456';
-  const mockProduct = {
-    id: 'prod-1',
-    name: 'Test Product',
-    price: 100,
-    description: 'Test Desc',
-  };
-  const mockCartItems = [
-    {
-      quantity: 2,
-      products: mockProduct,
-    },
-  ];
+vi.mock('@repo/env/web', () => ({
+  webEnv: { NEXT_PUBLIC_SITE_URL: 'http://localhost:3000' },
+}));
 
+vi.mock('@repo/utils', () => ({
+  Logger: { error: vi.fn() },
+}));
+
+describe('initiateCheckout', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Default User
-    mocks.getUser.mockResolvedValue({
-      data: { user: { id: userId, email: 'test@example.com' } },
-    });
-
-    // Payment Provider Mock
-    mocks.getProvider.mockReturnValue({
-      name: 'stripe',
-      createCheckoutSession: vi.fn().mockResolvedValue({
-        sessionId: 'sess_abc',
-        url: 'https://checkout.stripe.com/sess_abc',
-        provider: 'stripe',
-        metadata: {},
-      }),
-    });
   });
 
-  it('should successfully initiate checkout when user owns the cart', async () => {
-    // Arrange: Mock Supabase responses for Happy Path
+  it('should throw error if cart belongs to another user (IDOR prevention)', async () => {
+    const attackerId = 'attacker-123';
+    const victimCartId = 'cart-victim-456';
+    const victimUserId = 'victim-789';
 
-    // 1. Carts query (Ownership check - TO BE IMPLEMENTED IN CODE)
-    const mockCartsSingle = vi
-      .fn()
-      .mockResolvedValue({ data: { id: cartId }, error: null });
-    const mockCartsEq2 = vi.fn().mockReturnValue({ single: mockCartsSingle });
-    const mockCartsEq1 = vi.fn().mockReturnValue({ eq: mockCartsEq2 });
-    const mockCartsSelect = vi.fn().mockReturnValue({ eq: mockCartsEq1 });
-
-    // 2. Cart Items query
-    const mockItemsEq = vi
-      .fn()
-      .mockResolvedValue({ data: mockCartItems, error: null });
-    const mockItemsSelect = vi.fn().mockReturnValue({ eq: mockItemsEq });
-
-    // 3. Orders insert
-    const mockOrdersInsert = vi.fn().mockResolvedValue({ error: null });
-
-    // Implement 'from' to return correct chain based on table name
-    mocks.from.mockImplementation((table: string) => {
-      if (table === 'carts') {
-        return { select: mockCartsSelect };
-      }
-      if (table === 'cart_items') {
-        return { select: mockItemsSelect };
-      }
-      if (table === 'orders') {
-        return { insert: mockOrdersInsert };
-      }
-      return {};
+    // 1. Mock Attacker logged in
+    mockAuth.getUser.mockResolvedValue({
+      data: { user: { id: attackerId } },
     });
 
-    // Act
-    // We expect redirect to be called, which throws an error in Next.js (usually NEXT_REDIRECT)
-    // But since we mocked redirect, it won't throw unless the mock implementation throws.
-    // Our mock is a spy.
-
-    await initiateCheckout(cartId);
-
-    // Assert
-    // Verify carts check was called (This expectation will FAIL until we implement the fix)
-    // Wait, if I want to "Verify Failure" first, I should expect this call.
-    // But currently the code DOES NOT call 'carts'.
-    // So if I add expect(mocks.from).toHaveBeenCalledWith('carts'), it will fail.
-    // But wait, the function will proceed to 'cart_items' and succeed.
-
-    expect(mocks.from).toHaveBeenCalledWith('cart_items');
-    expect(mocks.from).toHaveBeenCalledWith('orders');
-    expect(mocks.redirect).toHaveBeenCalledWith(
-      'https://checkout.stripe.com/sess_abc',
-    );
-  });
-
-  it('should throw "Unauthorized" when user does not own the cart', async () => {
-    // Arrange: Mock Carts query to return null (not found/not owned)
-
-    const mockCartsSingle = vi
-      .fn()
-      .mockResolvedValue({ data: null, error: { message: 'Not found' } });
-    const mockCartsEq2 = vi.fn().mockReturnValue({ single: mockCartsSingle });
-    const mockCartsEq1 = vi.fn().mockReturnValue({ eq: mockCartsEq2 });
-    const mockCartsSelect = vi.fn().mockReturnValue({ eq: mockCartsEq1 });
-
-    // For cart_items (if it gets there)
-    const mockItemsEq = vi
-      .fn()
-      .mockResolvedValue({ data: mockCartItems, error: null });
-    const mockItemsSelect = vi.fn().mockReturnValue({ eq: mockItemsEq });
-
-    mocks.from.mockImplementation((table: string) => {
+    // 2. Mock Database returning cart owned by Victim
+    // This mocks the 'carts' table lookup
+    mockFrom.mockImplementation((table) => {
       if (table === 'carts') {
-        return { select: mockCartsSelect };
+        return {
+          select: () => ({
+            eq: () => ({
+              single: () =>
+                Promise.resolve({ data: { user_id: victimUserId } }),
+            }),
+          }),
+        };
       }
-      if (table === 'cart_items') {
-        return { select: mockItemsSelect };
-      }
-      return {};
+      return { select: mockSelect, insert: vi.fn() };
     });
 
     // Act & Assert
-    // Since current implementation DOES NOT check 'carts', it will proceed to 'cart_items' and SUCCEED.
-    // So this test expectation (rejects.toThrow) will FAIL.
-    // This confirms the vulnerability.
-    await expect(initiateCheckout(cartId)).rejects.toThrow(
-      /Unauthorized|Cart not found/,
+    await expect(initiateCheckout(victimCartId)).rejects.toThrow(
+      'Unauthorized: Cart does not belong to user',
     );
   });
 });

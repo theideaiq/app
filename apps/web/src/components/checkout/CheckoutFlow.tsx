@@ -71,6 +71,7 @@ export function CheckoutFlow() {
               </button>
             )}
           </div>
+
           <AnimatePresence>
             {step === 1 && (
               <motion.div
@@ -86,13 +87,13 @@ export function CheckoutFlow() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <label
-                          htmlFor="fullName"
+                          htmlFor="full-name"
                           className="text-xs text-slate-400"
                         >
                           Full Name
                         </label>
                         <input
-                          id="fullName"
+                          id="full-name"
                           required
                           value={address.fullName}
                           onChange={(e) =>
@@ -104,13 +105,13 @@ export function CheckoutFlow() {
                       </div>
                       <div className="space-y-1">
                         <label
-                          htmlFor="phoneNumber"
+                          htmlFor="phone"
                           className="text-xs text-slate-400"
                         >
                           Phone Number
                         </label>
                         <input
-                          id="phoneNumber"
+                          id="phone"
                           required
                           value={address.phone}
                           onChange={(e) =>
@@ -143,13 +144,13 @@ export function CheckoutFlow() {
 
                     <div className="space-y-1">
                       <label
-                        htmlFor="addressDetails"
+                        htmlFor="address"
                         className="text-xs text-slate-400"
                       >
                         Address Details
                       </label>
                       <textarea
-                        id="addressDetails"
+                        id="address"
                         required
                         value={address.street}
                         onChange={(e) =>
@@ -265,7 +266,7 @@ export function CheckoutFlow() {
             {items.map((item) => (
               <div key={item.id} className="flex gap-3">
                 <div className="w-12 h-12 bg-black rounded flex-shrink-0 relative overflow-hidden">
-                  {/* biome-ignore lint/performance/noImgElement: image src is external/dynamic */}
+                  {/* biome-ignore lint/performance/noImgElement: next/image refactor out of scope */}
                   <img
                     src={item.image}
                     alt={item.title}
