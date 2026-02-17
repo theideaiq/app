@@ -1,15 +1,19 @@
 import { render, screen } from '@testing-library/react';
-import { ProductCard } from './ProductCard';
-import { vi, describe, it, expect } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { Product } from '@/services/products';
+import { ProductCard } from './ProductCard';
 
 // Mock Next.js Link
 vi.mock('next/link', () => {
   return {
     __esModule: true,
-    default: ({ children, href }: { children: React.ReactNode; href: string }) => (
-      <a href={href}>{children}</a>
-    ),
+    default: ({
+      children,
+      href,
+    }: {
+      children: React.ReactNode;
+      href: string;
+    }) => <a href={href}>{children}</a>,
   };
 });
 
