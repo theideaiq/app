@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { cn } from '@repo/utils';
+import { motion } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -80,7 +80,7 @@ export function ProductCard({
               // Focus: Always visible when focused (keyboard)
               'focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow',
               // Hover state
-              'hover:bg-white hover:text-black'
+              'hover:bg-white hover:text-black',
             )}
             aria-label="Add to cart"
           >
