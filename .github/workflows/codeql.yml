@@ -46,6 +46,10 @@ jobs:
         with:
           node-version-file: '.nvmrc'
 
+      - name: Configure pnpm (Swift only)
+        if: matrix.language == 'swift'
+        run: echo "node-linker=hoisted" > .npmrc
+
       # Use pnpm to run scripts correctly in a monorepo
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
