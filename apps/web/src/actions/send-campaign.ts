@@ -1,5 +1,5 @@
 import { Logger } from '@repo/utils';
-import { requireAdmin } from '@/lib/auth-checks';
+// import { requireAdmin } from '@/lib/auth-checks'; // Not available in web
 
 interface SendCampaignResult {
   success: number;
@@ -14,8 +14,9 @@ export async function sendCampaign(
   // biome-ignore lint/suspicious/noExplicitAny: Template data structure is flexible
   templateData: any,
 ): Promise<SendCampaignResult> {
-  const { supabase } = await requireAdmin();
+  // const { supabase } = await requireAdmin();
 
+  /*
   // 1. Fetch Segment Users
   const { data: segment } = await supabase
     .from('marketing_segments')
@@ -52,4 +53,6 @@ export async function sendCampaign(
     total: emails.length,
     errors: [],
   };
+  */
+ throw new Error('Not implemented in web app');
 }

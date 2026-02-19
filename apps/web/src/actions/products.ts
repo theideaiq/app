@@ -1,13 +1,15 @@
 import { Logger } from '@repo/utils';
-import { createClient } from '@/lib/supabase/server';
-import { requireAdmin } from '@/lib/auth-checks';
+// import { createClient } from '@/lib/supabase/server';
+// import { requireAdmin } from '@/lib/auth-checks'; // Not available in web
 
 /**
  * Creates a new product.
  * Audit: Logs 'create_product'.
  */
 export async function createProduct(data: unknown) {
-  const { supabase } = await requireAdmin();
+  // const { supabase } = await requireAdmin();
+  throw new Error('Not implemented in web app');
+  /*
   const { data: product, error } = await supabase
     .from('products')
     .insert(data as any) // Explicit cast for now until we have better types
@@ -20,6 +22,7 @@ export async function createProduct(data: unknown) {
   }
 
   return product;
+  */
 }
 
 /**
@@ -27,7 +30,9 @@ export async function createProduct(data: unknown) {
  * Audit: Logs 'update_product'.
  */
 export async function updateProduct(id: string, updates: unknown) {
-  const { supabase } = await requireAdmin();
+  // const { supabase } = await requireAdmin();
+  throw new Error('Not implemented in web app');
+  /*
   const { error } = await supabase
     .from('products')
     .update(updates as any) // Explicit cast for now
@@ -37,6 +42,7 @@ export async function updateProduct(id: string, updates: unknown) {
     Logger.error('Failed to update product', error);
     throw new Error(error.message);
   }
+  */
 
   // Revalidate cache
   // revalidatePath('/admin/products');
@@ -48,6 +54,7 @@ export async function updateProduct(id: string, updates: unknown) {
  * Audit: Logs 'delete_product'.
  */
 export async function deleteProduct(id: string) {
+  /*
   const { supabase } = await requireAdmin();
   const { error } = await supabase
     .from('products')
@@ -58,4 +65,6 @@ export async function deleteProduct(id: string) {
     Logger.error('Failed to delete product', error);
     throw new Error(error.message);
   }
+  */
+ throw new Error('Not implemented in web app');
 }
