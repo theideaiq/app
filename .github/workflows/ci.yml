@@ -110,6 +110,8 @@ jobs:
           ZAIN_SECRET_KEY: "placeholder"
           SUPABASE_SERVICE_ROLE_KEY: "placeholder"
           GEMINI_API_KEY: "placeholder"
+          UPSTASH_REDIS_REST_URL: "https://placeholder.upstash.io"
+          UPSTASH_REDIS_REST_TOKEN: "placeholder"
         run: pnpm turbo build
 
   e2e:
