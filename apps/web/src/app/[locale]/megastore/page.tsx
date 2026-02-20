@@ -5,13 +5,13 @@ import { Badge, Button, Input } from '@repo/ui';
 import { motion } from 'framer-motion';
 import { Book, Gamepad2, Laptop, Search, Smartphone, Zap } from 'lucide-react';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
-import { useProducts } from '@/hooks/queries/use-products';
-import { useCartStore } from '@/stores/cart-store';
-import { ProductCard } from '@/components/ui/ProductCard';
-import { useUIStore } from '@/stores/ui-store';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { ProductCard } from '@/components/ui/ProductCard';
+import { useProducts } from '@/hooks/queries/use-products';
 import type { Product } from '@/services/products';
+import { useCartStore } from '@/stores/cart-store';
+import { useUIStore } from '@/stores/ui-store';
 
 const CATEGORIES = [
   { name: 'Gaming', icon: <Gamepad2 size={18} /> },
@@ -28,18 +28,22 @@ export default function MegastorePage() {
   const addItem = useCartStore((s) => s.addItem);
   const { openCart } = useUIStore();
 
-  const handleQuickAdd = (e: React.MouseEvent, product: any) => {
-    e.preventDefault(); // Prevent navigation
-    addItem({
-      id: product.id,
-      productId: product.id,
-      title: product.title,
-      price: product.price,
-      image: product.image,
-    });
-    toast.success(`${product.title} added to cart`);
-    openCart();
-  };
+  const handleQuickAdd = useCallback(
+    // biome-ignore lint/suspicious/noExplicitAny: convenient loose typing for UI handler
+    (e: React.MouseEvent, product: any) => {
+      e.preventDefault(); // Prevent navigation
+      addItem({
+        id: product.id,
+        productId: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+      });
+      toast.success(`${product.title} added to cart`);
+      openCart();
+    },
+    [addItem, openCart],
+  );
 
   // Memoize filtered products
   const filteredProducts = useMemo(
@@ -135,10 +139,7 @@ export default function MegastorePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
             {filteredProducts.map((product) => (
               <div key={product.id} className="h-[420px]">
-                <ProductCard
-                  product={product}
-                  onAddToCart={(e) => handleQuickAdd(e, product)}
-                />
+                <ProductCard product={product} onAddToCart={handleQuickAdd} />
               </div>
             ))}
           </div>
