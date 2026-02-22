@@ -34,9 +34,8 @@ export interface Database {
           name: string;
           // ... (omitting insert types for brevity as we primarily read in frontend)
         };
-        Update: {
-          // ...
-        };
+        // biome-ignore lint/complexity/noBannedTypes: Supabase generated types often use {} for updates
+        Update: {};
       };
       product_variants: {
         Row: {

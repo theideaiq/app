@@ -46,6 +46,8 @@ export async function getCashFlowData(year: number) {
     const monthIndex = date.getMonth();
     const month = monthNames[monthIndex];
 
+    if (!month) return; // Skip if month is undefined (e.g. invalid date)
+
     if (!monthlyData[month]) {
       monthlyData[month] = { revenue: 0, expenses: 0 };
     }
