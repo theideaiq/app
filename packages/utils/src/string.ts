@@ -13,11 +13,12 @@ const ENTITIES: Record<string, string> = {
 
 // Pre-compiled regex for performance (avoids recompilation in loops).
 const ENTITY_REGEX = /&[a-zA-Z0-9#]+;/g;
-const NUMERIC_ENTITY_REGEX = /^&#\d+;$/;
+// Supports decimal (&#123;) and hex (&#x1a; or &#X1A;)
+const NUMERIC_ENTITY_REGEX = /^&#([xX][0-9a-fA-F]+|\d+);$/;
 
 /**
  * Decodes HTML entities in a string to their corresponding characters.
- * Handles named entities and numeric entities (decimal).
+ * Handles named entities and numeric entities (decimal and hex).
  *
  * @param text - The string containing HTML entities.
  * @returns The decoded string.
@@ -30,8 +31,12 @@ export function decodeHtmlEntities(text: string): string {
 
     // Handle numeric entities
     if (NUMERIC_ENTITY_REGEX.test(match)) {
-      // Use fromCodePoint for Emoji/Astral support
-      return String.fromCodePoint(Number.parseInt(match.slice(2, -1), 10));
+      const content = match.slice(2, -1); // Remove &# and ;
+      const isHex = content.startsWith('x') || content.startsWith('X');
+      const code = isHex
+        ? Number.parseInt(content.slice(1), 16)
+        : Number.parseInt(content, 10);
+      return String.fromCodePoint(code);
     }
 
     return match;
@@ -48,6 +53,7 @@ export function decodeHtmlEntities(text: string): string {
  * slugify("Hello World!") // -> "hello-world"
  */
 export function slugify(text: string): string {
+  if (!text) return '';
   return text
     .toString()
     .toLowerCase()
