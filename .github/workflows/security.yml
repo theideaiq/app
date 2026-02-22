@@ -1,14 +1,17 @@
 name: Security
 
+permissions:
+  contents: read
+
 on:
-  pull_request:
   push:
     branches: [main]
+  pull_request:
 
 jobs:
   gitleaks:
-    name: Run Gitleaks
-    runs-on: ubuntu-24.04
+    name: Gitleaks
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
